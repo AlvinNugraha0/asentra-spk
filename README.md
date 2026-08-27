@@ -66,6 +66,66 @@ asentra-spk/
 └── README.md
 ```
 
+## Metode SAW (Simple Additive Weighting)
+
+Penilaian kinerja teknisi menggunakan tiga kriteria, seluruhnya bersifat **Benefit**
+(nilai lebih tinggi = lebih baik):
+
+| Kode | Kriteria            | Bobot |
+|------|---------------------|-------|
+| C1   | Kedisiplinan        | 0.30  |
+| C2   | Kualitas Hasil Kerja| 0.40  |
+| C3   | Tanggung Jawab      | 0.30  |
+
+**Normalisasi:**
+
+```
+rij = xij / max(xj)
+```
+
+**Nilai preferensi:**
+
+```
+Vi = Σ (wj × rij)
+```
+
+Hasil diurutkan dari `Vi` terbesar ke terkecil; nilai seri dipertahankan
+sama (tie-break berdasarkan `teknisi_id` ascending). Perhitungan dilakukan
+oleh `app/services/SawEngine.php` (single source of truth) dan diorkestrasi
+serta disimpan oleh `app/services/SawService.php` secara transaksional per
+periode (hapus hasil lama periode tersebut, lalu insert hasil baru).
+
+### Golden Dataset
+
+Dengan data seed periode `2026-08`, hasil SAW yang diharapkan:
+
+| Peringkat | Teknisi          | Nilai Preferensi (Vi) |
+|-----------|------------------|-----------------------|
+| 1         | Toni             | 1.000                 |
+| 2         | Aris             | 0.925                 |
+| 3         | Rahmat Hidayat   | 0.900                 |
+| 4         | Apip             | 0.850                 |
+| 5         | Wanto            | 0.750                 |
+| 6         | Heri             | 0.750                 |
+| 7         | IMADE            | 0.700                 |
+| 8         | Ahmad Sahudin    | 0.675                 |
+| 9         | Agus Supriyanto  | 0.600                 |
+| 10        | Asep             | 0.575                 |
+
+## Laporan & Cetak (Owner)
+
+Owner dapat mencetak laporan evaluasi per periode melalui menu **Laporan**
+atau tombol **Cetak Laporan** pada halaman Hasil Ranking.
+
+- Route: `/owner/laporan/{periode}`.
+- Laporan menggunakan hasil SAW yang sudah tersimpan (`tb_hasil`) — tidak
+  menghitung ulang SAW.
+- Layout cetak mandiri (putih, A4 portrait, grayscale-friendly) via
+  `public/css/print.css`; sidebar, topbar, navigasi, dan tombol disembunyikan
+  saat mencetak (`window.print()`).
+- Periode tanpa hasil SAW ditolak dengan pesan yang jelas (tidak membuat
+  laporan palsu).
+
 ## Testing
 
 ```bash
@@ -77,7 +137,27 @@ C:/xampp/php/php.exe tests/password_verify_test.php
 
 # Authentication service
 C:/xampp/php/php.exe tests/auth_service_test.php
+
+# SAW engine (17 checks)
+C:/xampp/php/php.exe tests/saw_engine_test.php
+
+# SAW service + persistence (12 checks)
+C:/xampp/php/php.exe tests/saw_service_test.php
+
+# SAW deep verification vs golden dataset (8 checks)
+C:/xampp/php/php.exe tests/saw_deep_verify.php
+
+# Owner UI + ranking + detail + print-link HTTP suite (41 checks)
+# Catatan: jalankan dengan server dev aktif (php -S 127.0.0.1:8080) dan .env test
+python tests/owner_ui_test.py
+
+# Laporan / report HTTP suite (24 checks)
+python tests/laporan_test.py
 ```
+
+Catatan: `owner_ui_test.py` dan `laporan_test.py` menjalankan pengujian HTTP
+terhadap aplikasi yang sedang berjalan; pastikan database sudah di-seed dan
+server dev PHP aktif di `127.0.0.1:8080` sebelum menjalankannya.
 
 ## Catatan Keamanan
 
