@@ -13,6 +13,18 @@ define('CONFIG_PATH', ROOT_PATH . DS . 'config');
 define('PUBLIC_PATH', __DIR__);
 define('DATABASE_PATH', ROOT_PATH . DS . 'database');
 
+// Built-in server: serve real static files (CSS/JS/images) directly so the
+// router does not swallow them and return the correct MIME type.
+if (PHP_SAPI === 'cli-server') {
+    $staticUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if (is_string($staticUri) && $staticUri !== '/' && $staticUri !== '') {
+        $staticFile = realpath(PUBLIC_PATH . $staticUri);
+        if ($staticFile !== false && str_starts_with($staticFile, realpath(PUBLIC_PATH) . DS) && is_file($staticFile)) {
+            return false;
+        }
+    }
+}
+
 // Autoloader for App namespace
 spl_autoload_register(function (string $class): void {
     $prefix = 'App\\';
