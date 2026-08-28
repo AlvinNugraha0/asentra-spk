@@ -25,8 +25,12 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
     <link rel="stylesheet" href="<?= asset('css/components.css') ?>">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Langsung ke konten</a>
+
     <div class="app-shell">
-        <aside class="sidebar">
+        <div class="sidebar-backdrop" data-sidebar-close></div>
+
+        <aside class="sidebar" id="app-sidebar">
             <div class="logo">AS</div>
 
             <?php if ($role === 'admin'): ?>
@@ -97,6 +101,9 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
 
         <div class="main-area">
             <header class="topbar">
+                <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-label="Buka menu navigasi" aria-controls="app-sidebar" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
                 <div class="search-bar">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input type="text" placeholder="Cari..." aria-label="Pencarian">
@@ -112,7 +119,7 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
                 </div>
             </header>
 
-            <main class="content">
+            <main class="content" id="main-content">
                 <?= $content ?>
             </main>
         </div>

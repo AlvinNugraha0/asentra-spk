@@ -104,15 +104,41 @@
     });
 
     // Mobile sidebar toggle
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
+    const sidebarBackdrop = document.querySelector('[data-sidebar-close]');
+
+    function setSidebar(open) {
+        if (!sidebar) return;
+        sidebar.classList.toggle('open', open);
+        if (sidebarToggle) {
+            sidebarToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        if (sidebarBackdrop) {
+            sidebarBackdrop.classList.toggle('show', open);
+        }
+    }
+
     document.addEventListener('click', function (e) {
         const toggle = e.target.closest('[data-sidebar-toggle]');
-        if (!toggle) return;
-
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('open');
+        if (toggle) {
+            const willOpen = sidebar ? !sidebar.classList.contains('open') : false;
+            setSidebar(willOpen);
+            return;
+        }
+        if (e.target.closest('[data-sidebar-close]')) {
+            setSidebar(false);
         }
     });
+
+    // Close drawer when a nav link is chosen (mobile)
+    if (sidebar) {
+        sidebar.addEventListener('click', function (e) {
+            if (e.target.closest('a')) {
+                setSidebar(false);
+            }
+        });
+    }
 
     // Auto-show toast from session data embedded by PHP
     document.addEventListener('DOMContentLoaded', function () {
