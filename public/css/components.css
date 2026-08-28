@@ -577,6 +577,123 @@
     color: var(--text-muted);
 }
 
+/* Layout helpers (consolidated from inline styles) */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.row-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.row-end {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+}
+
+.kpi-value-sm {
+    font-size: var(--text-lg);
+}
+
+.kpi-value-gold {
+    color: var(--gold);
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+}
+
+.weight-big {
+    font-size: var(--text-xl);
+}
+
+.highlight-name {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+}
+
+.rank-hero {
+    text-align: right;
+}
+
+.rank-hero-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--gold);
+}
+
+/* Table cells */
+.cell-flex {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.cell-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.icon-btn-sm {
+    width: 32px;
+    height: 32px;
+}
+
+.icon-btn-danger {
+    color: var(--danger);
+}
+
+.text-right { text-align: right; }
+
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-2-1 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+}
+
 /* Badge: state transition */
 .badge {
     transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);

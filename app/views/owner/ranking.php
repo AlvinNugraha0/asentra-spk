@@ -5,12 +5,12 @@
 /** @var array<int, string> $periods */
 /** @var array<int, array<string, mixed>> $results */
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
     <p class="page-subtitle"><?= e($subtitle) ?></p>
 </div>
 
-<div class="action-bar">
+<div class="action-bar" data-reveal="up">
     <form method="GET" action="<?= route('/owner/ranking') ?>" class="filter-group" style="flex: 1;">
         <select name="periode" class="select" style="min-width: 200px;" onchange="this.form.submit()">
             <option value="">Pilih periode</option>
@@ -24,12 +24,12 @@
     </form>
 
     <?php if ($periode !== ''): ?>
-        <div style="display: flex; align-items: center; gap: var(--space-3);">
+        <div class="row">
             <a href="<?= route('/owner/laporan/' . urlencode($periode)) ?>" class="btn btn-secondary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
                 Cetak Laporan
             </a>
-            <form method="POST" action="<?= route('/owner/ranking/process') ?>" style="margin: 0;">
+            <form method="POST" action="<?= route('/owner/ranking/process') ?>" style="margin: 0;" data-loading>
                 <?= csrfField() ?>
                 <input type="hidden" name="periode" value="<?= e($periode) ?>">
                 <button type="submit" class="btn btn-primary">
@@ -42,7 +42,7 @@
 </div>
 
 <?php if ($periode === ''): ?>
-    <div class="card empty-state">
+    <div class="card empty-state" data-reveal="scale">
         <div class="empty-state-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11v6"/><path d="M9 14h6"/></svg>
         </div>
@@ -50,21 +50,21 @@
         <p>Silakan pilih periode evaluasi untuk melihat hasil ranking SAW.</p>
     </div>
 <?php elseif (empty($results)): ?>
-    <div class="card empty-state">
+    <div class="card empty-state" data-reveal="scale">
         <div class="empty-state-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
         </div>
         <div class="empty-state-title">Data Ranking Tidak Tersedia</div>
         <p>Periode <strong><?= e(periodLabel($periode)) ?></strong> memiliki data penilaian, tetapi belum diproses dengan SAW.</p>
-        <form method="POST" action="<?= route('/owner/ranking/process') ?>" style="margin-top: var(--space-4);">
+        <form method="POST" action="<?= route('/owner/ranking/process') ?>" style="margin-top: var(--space-4);" data-loading>
             <?= csrfField() ?>
             <input type="hidden" name="periode" value="<?= e($periode) ?>">
             <button type="submit" class="btn btn-primary">Proses SAW Sekarang</button>
         </form>
     </div>
 <?php else: ?>
-    <div class="card">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+    <div class="card" data-reveal="up">
+        <div class="row-between" style="margin-bottom: var(--space-5);">
             <div>
                 <h2 class="card-title">Ranking SAW — <?= e(periodLabel($periode)) ?></h2>
                 <p class="card-subtitle">Hasil perhitungan berdasarkan kriteria C1, C2, dan C3.</p>
@@ -84,20 +84,10 @@
                         <th>AKSI</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-reveal-group>
                     <?php foreach ($results as $r): ?>
-                        <tr>
-                            <td>
-                                <?php if ($r['ranking'] === 1): ?>
-                                    <span class="badge badge-gold"><?= e((string) $r['ranking']) ?></span>
-                                <?php elseif ($r['ranking'] === 2): ?>
-                                    <span class="badge badge-info"><?= e((string) $r['ranking']) ?></span>
-                                <?php elseif ($r['ranking'] === 3): ?>
-                                    <span class="badge badge-warning"><?= e((string) $r['ranking']) ?></span>
-                                <?php else: ?>
-                                    <span class="badge badge-neutral"><?= e((string) $r['ranking']) ?></span>
-                                <?php endif; ?>
-                            </td>
+                        <tr data-reveal>
+                            <td><?= rankBadge((int) $r['ranking']) ?></td>
                             <td>
                                 <strong><?= e($r['kode_teknisi']) ?></strong>
                                 <span class="text-muted" style="margin-left: var(--space-2);"><?= e($r['nama_teknisi']) ?></span>

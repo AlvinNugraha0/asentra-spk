@@ -38,7 +38,7 @@ $ratingOptions = [
     <?php endif; ?>
 
     <div class="card" style="margin-bottom: var(--space-5);">
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5);">
+        <div class="grid-2">
             <div class="form-group" style="margin-bottom: 0;">
                 <label class="label" for="periode">Periode</label>
                 <input type="month" id="periode" name="periode" class="input" value="<?= e($selectedPeriode) ?>" required>
@@ -63,12 +63,12 @@ $ratingOptions = [
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-bottom: var(--space-5);">
+    <div class="grid-3" style="margin-bottom: var(--space-5);">
         <?php foreach ($kriteria as $k): ?>
             <?php $key = $k['key']; $val = $$key; ?>
             <div class="card">
                 <div style="margin-bottom: var(--space-4);">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div class="row-between">
                         <span class="font-bold text-gold"><?= e($k['kode']) ?></span>
                         <span class="badge badge-gold"><?= e($k['bobot']) ?></span>
                     </div>
@@ -76,7 +76,7 @@ $ratingOptions = [
                     <div class="meta-text">Benefit</div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                <div class="stack" style="gap: var(--space-2);">
                     <?php foreach ($ratingOptions as $rating => $label): ?>
                         <label class="rating-option <?= (string) $val === (string) $rating ? 'selected' : '' ?>" style="cursor: pointer;">
                             <input type="radio" name="<?= e($key) ?>" value="<?= e((string) $rating) ?>" <?= (string) $val === (string) $rating ? 'checked' : '' ?> required style="margin-right: var(--space-3);">
@@ -92,7 +92,7 @@ $ratingOptions = [
         <?php endforeach; ?>
     </div>
 
-    <div style="display: flex; gap: var(--space-3); justify-content: flex-end;">
+    <div class="row-end">
         <a href="<?= route('/admin/penilaian') ?>" class="btn btn-secondary">Batal</a>
         <button type="submit" class="btn btn-primary"><?= $isEdit ? 'Simpan Perubahan' : 'Simpan Penilaian' ?></button>
     </div>

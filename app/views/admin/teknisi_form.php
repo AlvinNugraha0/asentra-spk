@@ -51,7 +51,7 @@ $keterangan = $teknisi['keterangan'] ?? ($old['keterangan'] ?? '');
             <textarea id="keterangan" name="keterangan" class="input" rows="3" placeholder="Keterangan opsional"><?= e($keterangan) ?></textarea>
         </div>
 
-        <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6);">
+        <div class="row-end" style="margin-top: var(--space-6);">
             <a href="<?= route('/admin/teknisi') ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary"><?= $isEdit ? 'Simpan Perubahan' : 'Simpan Teknisi' ?></button>
         </div>

@@ -156,7 +156,13 @@
     document.documentElement.classList.add('js');
 
     function initMotion() {
-        if (reducedMotion) return;
+        if (reducedMotion) {
+            // Content must never stay hidden: reveal everything instantly.
+            document.querySelectorAll('[data-reveal]').forEach(function (el) {
+                el.classList.add('is-visible');
+            });
+            return;
+        }
 
         // KPI count-up (MOTION.md §7) — server value is the source of truth,
         // JS only animates the display. Uses data-count (final integer).

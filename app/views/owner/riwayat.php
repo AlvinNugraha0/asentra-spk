@@ -43,7 +43,7 @@
     </div>
 <?php else: ?>
     <div class="card">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5);">
+        <div class="row-between" style="margin-bottom: var(--space-5);">
             <div>
                 <h2 class="card-title">Riwayat — <?= e(periodLabel($periode)) ?></h2>
                 <p class="card-subtitle">Periode terisolasi dari periode lain. Hasil berasal dari proses SAW terakhir.</p>

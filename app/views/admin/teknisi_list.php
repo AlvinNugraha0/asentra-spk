@@ -68,21 +68,21 @@
                             <td class="text-secondary"><?= e($t['keterangan'] ?? '-') ?></td>
                             <td class="meta-text"><?= e(dateFormat($t['updated_at'], 'd M Y H:i')) ?></td>
                             <td>
-                                <div style="display: flex; gap: var(--space-2);">
-                                    <a href="<?= route('/admin/teknisi/edit/' . $t['id']) ?>" class="icon-btn" title="Edit" style="width: 32px; height: 32px;">
+                                <div class="cell-actions">
+                                    <a href="<?= route('/admin/teknisi/edit/' . $t['id']) ?>" class="icon-btn icon-btn-sm" title="Edit">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                                     </a>
                                     <form method="POST" action="<?= route('/admin/teknisi/toggle-status') ?>" style="margin: 0;">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="id" value="<?= e((string) $t['id']) ?>">
-                                        <button type="submit" class="icon-btn" title="<?= $t['status'] === 'active' ? 'Nonaktifkan' : 'Aktifkan' ?>" style="width: 32px; height: 32px;">
+                                        <button type="submit" class="icon-btn icon-btn-sm" title="<?= $t['status'] === 'active' ? 'Nonaktifkan' : 'Aktifkan' ?>">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
                                         </button>
                                     </form>
                                     <form method="POST" action="<?= route('/admin/teknisi/delete') ?>" style="margin: 0;" data-confirm="Teknisi ini akan dihapus permanen. Lanjutkan?">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="id" value="<?= e((string) $t['id']) ?>">
-                                        <button type="submit" class="icon-btn" title="Hapus" style="width: 32px; height: 32px; color: var(--danger);">
+                                        <button type="submit" class="icon-btn icon-btn-sm icon-btn-danger" title="Hapus">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                         </button>
                                     </form>

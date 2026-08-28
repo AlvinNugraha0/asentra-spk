@@ -72,3 +72,16 @@ function ratingLabel(int $rating): string
         default => (string) $rating,
     };
 }
+
+/**
+ * Ranking badge (MOTION.md §9 Top-3 emphasis). Returns raw HTML.
+ */
+function rankBadge(int $ranking): string
+{
+    return match (true) {
+        $ranking === 1 => '<span class="badge rank-1">' . $ranking . '</span>',
+        $ranking === 2 => '<span class="badge rank-2">' . $ranking . '</span>',
+        $ranking === 3 => '<span class="badge rank-3">' . $ranking . '</span>',
+        default => '<span class="badge rank-default">' . $ranking . '</span>',
+    };
+}

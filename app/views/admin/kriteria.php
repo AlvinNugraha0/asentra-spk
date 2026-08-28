@@ -52,15 +52,15 @@
             </table>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-5);">
+        <div class="row-between" style="margin-top: var(--space-5);">
             <div>
                 <span class="text-secondary" style="font-size: var(--text-sm);">Total Bobot</span>
-                <div class="font-bold text-gold" style="font-size: var(--text-xl);"><?= e(weightPercent($totalBobot)) ?></div>
+                <div class="font-bold text-gold weight-big"><?= e(weightPercent($totalBobot)) ?></div>
                 <?php if (!$valid): ?>
                     <div class="form-error" style="margin-top: var(--space-1);"><?= e($errors['total'] ?? 'Total bobot harus 100%.') ?></div>
                 <?php endif; ?>
             </div>
-            <div style="display: flex; gap: var(--space-3);">
+            <div class="row">
                 <a href="<?= route('/admin/dashboard') ?>" class="btn btn-secondary">Batal</a>
                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
             </div>
