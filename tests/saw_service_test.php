@@ -141,4 +141,14 @@ foreach ($failed as $f) {
     echo 'FAILED: ' . $f['name'] . PHP_EOL;
 }
 
+// --- Teardown ---
+// Remove test-only data created during this suite. Baseline (seed.sql) only
+// contains tb_penilaian for periode '2026-08'; tb_teknisi id=1 (Toni) is
+// 'active' in the baseline. Periods 2026-09 and 2026-11 do not exist in seed
+// and were inserted solely by test cases 6 and 10 above.
+\App\Core\Database::query("DELETE FROM tb_hasil     WHERE periode IN ('2026-09', '2026-11')");
+\App\Core\Database::query("DELETE FROM tb_penilaian WHERE periode IN ('2026-09', '2026-11')");
+\App\Core\Database::query("UPDATE tb_teknisi SET status = 'active' WHERE id = 1"); // restore Toni (test 8 set inactive)
+echo 'Teardown complete.' . PHP_EOL;
+
 exit($failed ? 1 : 0);
