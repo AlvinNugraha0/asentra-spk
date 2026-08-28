@@ -5,6 +5,8 @@
     // Toast system
     const toastContainer = document.createElement('div');
     toastContainer.className = 'toast-container';
+    toastContainer.setAttribute('aria-live', 'polite');
+    toastContainer.setAttribute('role', 'status');
     document.body.appendChild(toastContainer);
 
     window.showToast = function (message, type = 'success', duration = 4000) {
@@ -21,11 +23,10 @@
         toastContainer.appendChild(toast);
 
         setTimeout(function () {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(10px)';
+            toast.classList.add('is-leaving');
             setTimeout(function () {
                 toast.remove();
-            }, 180);
+            }, 200);
         }, duration);
     };
 
@@ -148,6 +149,117 @@
             window._toast = null;
         }
     });
+
+    // Motion enhancement flag (progressive enhancement: nothing below runs
+    // without JS, and all of it is skipped under reduced-motion).
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.documentElement.classList.add('js');
+
+    function initMotion() {
+        if (reducedMotion) return;
+
+        // KPI count-up (MOTION.md §7) — server value is the source of truth,
+        // JS only animates the display. Uses data-count (final integer).
+        function animateCount(el) {
+            const target = parseFloat(el.getAttribute('data-count'));
+            if (isNaN(target)) return;
+            const duration = 700;
+            const start = performance.now();
+            const decimals = (el.getAttribute('data-count') || '').split('.')[1];
+            const fixed = decimals ? decimals.length : 0;
+            function step(now) {
+                const p = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - p, 3);
+                const val = target * eased;
+                el.textContent = fixed ? val.toFixed(fixed) : Math.round(val).toString();
+                if (p < 1) requestAnimationFrame(step);
+                else el.textContent = fixed ? target.toFixed(fixed) : String(target);
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Data-adaptive stagger (MOTION.md §8, §21): fewer rows = more stagger.
+        function revealTargets() {
+            const groups = document.querySelectorAll('[data-reveal-group]');
+            groups.forEach(function (group) {
+                const items = group.querySelectorAll('[data-reveal]');
+                if (!items.length) return;
+                const n = items.length;
+                const stagger = n <= 10 ? 60 : (n <= 50 ? 30 : (n <= 100 ? 15 : 0));
+                items.forEach(function (item, i) {
+                    if (stagger === 0) {
+                        item.classList.add('is-visible');
+                    } else {
+                        item.style.transitionDelay = (i * stagger) + 'ms';
+                    }
+                });
+            });
+        }
+
+        const revealEls = document.querySelectorAll('[data-reveal]');
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08 });
+            revealEls.forEach(function (el) { io.observe(el); });
+        } else {
+            revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+        }
+
+        revealTargets();
+
+        const counters = document.querySelectorAll('[data-count]');
+        if ('IntersectionObserver' in window) {
+            const io2 = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        animateCount(entry.target);
+                        io2.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.4 });
+            counters.forEach(function (el) { io2.observe(el); });
+        } else {
+            counters.forEach(animateCount);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMotion);
+    } else {
+        initMotion();
+    }
+
+    // Button loading state helper (MOTION.md §12) — no fake progress, only
+    // indeterminate spinner while the form actually submits.
+    window.setButtonLoading = function (form, loading) {
+        if (!form) return;
+        const btn = form.querySelector('[type="submit"]');
+        if (!btn) return;
+        if (loading) {
+            btn.setAttribute('data-orig-html', btn.innerHTML);
+            btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span> Memproses...';
+            btn.classList.add('is-loading');
+        } else {
+            const orig = btn.getAttribute('data-orig-html');
+            if (orig) btn.innerHTML = orig;
+            btn.classList.remove('is-loading');
+        }
+    };
+
+    // Wire data-loading forms: submit → indeterminate spinner (real submit,
+    // no artificial delay, no fake percentage).
+    document.addEventListener('submit', function (e) {
+        const form = e.target.closest('[data-loading]');
+        if (form) {
+            setButtonLoading(form, true);
+        }
+    }, true);
 
     function escapeHtml(text) {
         const div = document.createElement('div');

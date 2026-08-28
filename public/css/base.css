@@ -294,6 +294,30 @@ img {
 }
 
 /* Utilities */
+/* Progressive reveal — gated behind .js so content stays visible without JS.
+   [data-reveal]        = fade (safe for table rows)
+   [data-reveal="up"]   = fade + slide up (cards, KPI, sections)
+   [data-reveal="scale"]= fade + scale (empty-state icon) */
+.js [data-reveal] {
+    opacity: 0;
+    transition: opacity var(--motion-normal) var(--ease-out);
+}
+
+.js [data-reveal="up"] {
+    transform: translateY(10px);
+    transition: opacity var(--motion-normal) var(--ease-out), transform var(--motion-normal) var(--ease-out);
+}
+
+.js [data-reveal="scale"] {
+    transform: scale(0.96);
+    transition: opacity var(--motion-normal) var(--ease-out), transform var(--motion-normal) var(--ease-out);
+}
+
+.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
 .skip-link {
     position: absolute;
     top: -48px;
