@@ -6,20 +6,20 @@
 /** @var string $periode */
 /** @var string $search */
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
     <p class="page-subtitle"><?= e($subtitle) ?></p>
 </div>
 
-<div class="action-bar">
-    <form method="GET" action="<?= route('/admin/penilaian') ?>" class="filter-group" style="flex: 1;">
-        <select name="periode" class="select" style="min-width: 160px;" onchange="this.form.submit()">
+<div class="action-bar" data-reveal="up">
+    <form method="GET" action="<?= route('/admin/penilaian') ?>" class="filter-group flex-1">
+        <select name="periode" class="select filter-select" onchange="this.form.submit()">
             <option value="">Semua Periode</option>
             <?php foreach ($periods as $p): ?>
                 <option value="<?= e($p) ?>" <?= $periode === $p ? 'selected' : '' ?>><?= e(periodLabel($p)) ?></option>
             <?php endforeach; ?>
         </select>
-        <div class="search-bar" style="min-width: 240px;">
+        <div class="search-bar search-bar-flex">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input type="text" name="search" placeholder="Cari teknisi..." value="<?= e($search) ?>">
         </div>
@@ -33,7 +33,7 @@
     </a>
 </div>
 
-<div class="card">
+<div class="card" data-reveal="up">
     <div class="table-wrap">
         <table class="table">
             <thead>
@@ -53,8 +53,12 @@
                 <?php if (empty($list)): ?>
                     <tr>
                         <td colspan="9">
-                            <div class="empty-state" style="padding: var(--space-10) 0;">
-                                <p>Belum ada data penilaian.</p>
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                                </div>
+                                <div class="empty-state-title">Belum Ada Data Penilaian</div>
+                                <p>Belum ada penilaian untuk periode ini.</p>
                             </div>
                         </td>
                     </tr>
@@ -64,7 +68,7 @@
                             <td class="tabular text-muted"><?= e((string) ($i + 1)) ?></td>
                             <td>
                                 <strong><?= e($p['kode_teknisi']) ?></strong>
-                                <span class="text-muted" style="margin-left: var(--space-2);"><?= e($p['nama_teknisi']) ?></span>
+                                <span class="text-muted"><?= e($p['nama_teknisi']) ?></span>
                             </td>
                             <td><?= e(periodLabel($p['periode'])) ?></td>
                             <td><span class="badge badge-neutral"><?= e((string) $p['c1']) ?></span></td>

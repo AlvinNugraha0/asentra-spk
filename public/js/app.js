@@ -30,7 +30,8 @@
         }, duration);
     };
 
-    // Modal system
+    // Modal system — accessible dialog: role, aria-modal, aria-labelledby,
+    // focus trap, ESC close, focus restore.
     window.showModal = function (options) {
         options = options || {};
         const title = options.title || 'Konfirmasi';
@@ -42,9 +43,9 @@
         const backdrop = document.createElement('div');
         backdrop.className = 'modal-backdrop';
         backdrop.innerHTML =
-            '<div class="modal">' +
-            '<h3 class="modal-title">' + escapeHtml(title) + '</h3>' +
-            '<p class="modal-text">' + escapeHtml(text) + '</p>' +
+            '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">' +
+            '<h3 class="modal-title" id="modal-title">' + escapeHtml(title) + '</h3>' +
+            '<p class="modal-text" id="modal-text">' + escapeHtml(text) + '</p>' +
             '<div class="modal-actions">' +
             '<button type="button" class="btn btn-secondary modal-cancel">' + escapeHtml(cancelText) + '</button>' +
             '<button type="button" class="btn ' + (danger ? 'btn-danger' : 'btn-primary') + ' modal-confirm">' + escapeHtml(confirmText) + '</button>' +
@@ -53,16 +54,56 @@
 
         document.body.appendChild(backdrop);
 
+        const modal = backdrop.querySelector('.modal');
+        const confirmBtn = backdrop.querySelector('.modal-confirm');
+        const cancelBtn = backdrop.querySelector('.modal-cancel');
+        const previouslyFocused = document.activeElement;
+
         // Trigger reflow for transition
         void backdrop.offsetWidth;
         backdrop.classList.add('show');
 
-        return new Promise(function (resolve) {
-            backdrop.querySelector('.modal-confirm').addEventListener('click', function () {
+        function closeBackdrop() {
+            backdrop.classList.remove('show');
+            document.removeEventListener('keydown', onKeydown, true);
+            setTimeout(function () {
+                backdrop.remove();
+                if (previouslyFocused && previouslyFocused.focus) {
+                    previouslyFocused.focus();
+                }
+            }, 180);
+        }
+
+        function onKeydown(e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeBackdrop();
+                resolve(false);
+                return;
+            }
+            if (e.key === 'Tab') {
+                const items = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (!items.length) return;
+                const first = items[0];
+                const last = items[items.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        }
+
+        let resolve;
+        return new Promise(function (res) {
+            resolve = res;
+            confirmBtn.addEventListener('click', function () {
                 closeBackdrop();
                 resolve(true);
             });
-            backdrop.querySelector('.modal-cancel').addEventListener('click', function () {
+            cancelBtn.addEventListener('click', function () {
                 closeBackdrop();
                 resolve(false);
             });
@@ -72,13 +113,10 @@
                     resolve(false);
                 }
             });
+            document.addEventListener('keydown', onKeydown, true);
 
-            function closeBackdrop() {
-                backdrop.classList.remove('show');
-                setTimeout(function () {
-                    backdrop.remove();
-                }, 180);
-            }
+            // Move focus into the dialog
+            confirmBtn.focus();
         });
     };
 

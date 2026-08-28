@@ -5,14 +5,14 @@
 /** @var array<int, string> $periods */
 /** @var string $periode */
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
     <p class="page-subtitle"><?= e($subtitle) ?></p>
 </div>
 
-<div class="action-bar">
-    <form method="GET" action="<?= route('/admin/riwayat') ?>" class="filter-group" style="flex: 1;">
-        <select name="periode" class="select" style="min-width: 160px;" onchange="this.form.submit()">
+<div class="action-bar" data-reveal="up">
+    <form method="GET" action="<?= route('/admin/riwayat') ?>" class="filter-group flex-1">
+        <select name="periode" class="select filter-select" onchange="this.form.submit()">
             <option value="">Semua Periode</option>
             <?php foreach ($periods as $p): ?>
                 <option value="<?= e($p) ?>" <?= $periode === $p ? 'selected' : '' ?>><?= e(periodLabel($p)) ?></option>
@@ -24,7 +24,7 @@
     </form>
 </div>
 
-<div class="card">
+<div class="card" data-reveal="up">
     <div class="table-wrap">
         <table class="table">
             <thead>
@@ -43,8 +43,12 @@
                 <?php if (empty($list)): ?>
                     <tr>
                         <td colspan="8">
-                            <div class="empty-state" style="padding: var(--space-10) 0;">
-                                <p>Belum ada riwayat penilaian.</p>
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                </div>
+                                <div class="empty-state-title">Belum Ada Riwayat Penilaian</div>
+                                <p>Belum ada penilaian yang tercatat.</p>
                             </div>
                         </td>
                     </tr>
@@ -54,7 +58,7 @@
                             <td class="tabular text-muted"><?= e((string) ($i + 1)) ?></td>
                             <td>
                                 <strong><?= e($p['kode_teknisi']) ?></strong>
-                                <span class="text-muted" style="margin-left: var(--space-2);"><?= e($p['nama_teknisi']) ?></span>
+                                <span class="text-muted"><?= e($p['nama_teknisi']) ?></span>
                             </td>
                             <td><?= e(periodLabel($p['periode'])) ?></td>
                             <td><span class="badge badge-neutral"><?= e((string) $p['c1']) ?></span></td>

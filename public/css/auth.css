@@ -68,7 +68,7 @@
 .input-auth {
     background: var(--bg-surface);
     border-color: var(--border);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
 }
 
 .input-auth:focus {
@@ -124,4 +124,9 @@
 .error-text {
     color: var(--text-muted);
     margin-bottom: var(--space-6);
+}
+
+/* Login ambient drift (gated .js, killed by reduced-motion) */
+.js .auth-ambient {
+    animation: ambientDrift 24s var(--ease-out) infinite alternate;
 }

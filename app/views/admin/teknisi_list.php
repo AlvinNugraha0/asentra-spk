@@ -5,18 +5,18 @@
 /** @var string $search */
 /** @var string $status */
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
     <p class="page-subtitle"><?= e($subtitle) ?></p>
 </div>
 
-<div class="action-bar">
-    <form method="GET" action="<?= route('/admin/teknisi') ?>" class="filter-group" style="flex: 1;">
-        <div class="search-bar" style="min-width: 240px;">
+<div class="action-bar" data-reveal="up">
+    <form method="GET" action="<?= route('/admin/teknisi') ?>" class="filter-group flex-1">
+        <div class="search-bar search-bar-flex">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input type="text" name="search" placeholder="Cari kode atau nama..." value="<?= e($search) ?>">
         </div>
-        <select name="status" class="select" style="min-width: 160px;" onchange="this.form.submit()">
+        <select name="status" class="select filter-select" onchange="this.form.submit()">
             <option value="" <?= $status === '' ? 'selected' : '' ?>>Semua Status</option>
             <option value="active" <?= $status === 'active' ? 'selected' : '' ?>>Aktif</option>
             <option value="inactive" <?= $status === 'inactive' ? 'selected' : '' ?>>Tidak Aktif</option>
@@ -31,7 +31,7 @@
     </a>
 </div>
 
-<div class="card">
+<div class="card" data-reveal="up">
     <div class="table-wrap">
         <table class="table">
             <thead>
@@ -48,8 +48,12 @@
                 <?php if (empty($list)): ?>
                     <tr>
                         <td colspan="6">
-                            <div class="empty-state" style="padding: var(--space-10) 0;">
-                                <p>Belum ada data teknisi.</p>
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </div>
+                                <div class="empty-state-title">Belum Ada Data Teknisi</div>
+                                <p>Tambahkan teknisi untuk mulai evaluasi kinerja.</p>
                             </div>
                         </td>
                     </tr>
@@ -72,14 +76,14 @@
                                     <a href="<?= route('/admin/teknisi/edit/' . $t['id']) ?>" class="icon-btn icon-btn-sm" title="Edit" aria-label="Edit teknisi <?= e($t['nama']) ?>">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                                     </a>
-                                    <form method="POST" action="<?= route('/admin/teknisi/toggle-status') ?>" style="margin: 0;">
+                                    <form method="POST" action="<?= route('/admin/teknisi/toggle-status') ?>" class="form-reset">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="id" value="<?= e((string) $t['id']) ?>">
                                         <button type="submit" class="icon-btn icon-btn-sm" title="<?= $t['status'] === 'active' ? 'Nonaktifkan' : 'Aktifkan' ?>" aria-label="<?= $t['status'] === 'active' ? 'Nonaktifkan' : 'Aktifkan' ?> teknisi <?= e($t['nama']) ?>">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
                                         </button>
                                     </form>
-                                    <form method="POST" action="<?= route('/admin/teknisi/delete') ?>" style="margin: 0;" data-confirm="Teknisi ini akan dihapus permanen. Lanjutkan?">
+                                    <form method="POST" action="<?= route('/admin/teknisi/delete') ?>" class="form-reset" data-confirm="Teknisi ini akan dihapus permanen. Lanjutkan?">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="id" value="<?= e((string) $t['id']) ?>">
                                         <button type="submit" class="icon-btn icon-btn-sm icon-btn-danger" title="Hapus" aria-label="Hapus teknisi <?= e($t['nama']) ?>">

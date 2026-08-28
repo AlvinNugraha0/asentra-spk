@@ -9,8 +9,8 @@
     <p class="page-subtitle"><?= e($subtitle) ?></p>
 </div>
 
-<div class="card" style="margin-bottom: var(--space-5);" data-reveal="up">
-    <div class="row-between" style="flex-wrap: wrap;">
+<div class="card mb-5" data-reveal="up">
+    <div class="row-between row-wrap">
         <div>
             <div class="meta-text">Teknisi</div>
             <div class="highlight-name"><?= e($hasil['kode_teknisi']) ?> — <?= e($hasil['nama_teknisi']) ?></div>
@@ -159,15 +159,15 @@
         <div class="saw-flow-arrow">
             <div class="saw-flow-dot"></div>
         </div>
-        <div class="saw-flow-card" style="border-color: var(--gold); background: var(--gold-soft);">
+        <div class="saw-flow-card saw-flow-card-highlight">
             <div class="saw-flow-label">Nilai Preferensi (V<sub>i</sub>)</div>
-            <div class="saw-flow-value" style="font-size: var(--text-3xl); color: var(--gold);"><?= e(scoreFormat((float) $hasil['nilai_preferensi'], 6)) ?></div>
-            <div class="meta-text" style="margin-top: var(--space-2);">Jumlah kontribusi C1 + C2 + C3</div>
+            <div class="saw-flow-value saw-flow-value-final"><?= e(scoreFormat((float) $hasil['nilai_preferensi'], 6)) ?></div>
+            <div class="meta-text mt-2">Jumlah kontribusi C1 + C2 + C3</div>
         </div>
     </div>
 </div>
 
-<div class="row" style="margin-top: var(--space-6);" data-reveal="up">
+<div class="row mt-6" data-reveal="up">
     <a href="<?= route('/owner/ranking?periode=' . urlencode($hasil['periode'])) ?>" class="btn btn-secondary">Kembali ke Ranking</a>
     <a href="<?= route('/owner/riwayat?periode=' . urlencode($hasil['periode'])) ?>" class="btn btn-ghost">Lihat Riwayat</a>
 </div>

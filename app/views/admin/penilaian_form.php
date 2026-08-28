@@ -27,26 +27,26 @@ $ratingOptions = [
     1 => 'Kurang',
 ];
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
 </div>
 
-<form method="POST" action="<?= route($isEdit ? '/admin/penilaian/update' : '/admin/penilaian/store') ?>">
+<form method="POST" action="<?= route($isEdit ? '/admin/penilaian/update' : '/admin/penilaian/store') ?>" data-reveal="up">
     <?= csrfField() ?>
     <?php if ($isEdit): ?>
         <input type="hidden" name="id" value="<?= e((string) $id) ?>">
     <?php endif; ?>
 
-    <div class="card" style="margin-bottom: var(--space-5);">
+    <div class="card mb-5">
         <div class="grid-2">
-            <div class="form-group" style="margin-bottom: 0;">
+            <div class="form-group mb-0">
                 <label class="label" for="periode">Periode</label>
                 <input type="month" id="periode" name="periode" class="input" value="<?= e($selectedPeriode) ?>" required>
                 <?php if (!empty($errors['periode'])): ?>
                     <div class="form-error"><?= e($errors['periode']) ?></div>
                 <?php endif; ?>
             </div>
-            <div class="form-group" style="margin-bottom: 0;">
+            <div class="form-group mb-0">
                 <label class="label" for="teknisi_id">Teknisi</label>
                 <select id="teknisi_id" name="teknisi_id" class="select" required>
                     <option value="">Pilih teknisi</option>
@@ -63,30 +63,30 @@ $ratingOptions = [
         </div>
     </div>
 
-    <div class="grid-3" style="margin-bottom: var(--space-5);">
+    <div class="grid-3 mb-5">
         <?php foreach ($kriteria as $k): ?>
             <?php $key = $k['key']; $val = $$key; ?>
             <div class="card">
-                <div style="margin-bottom: var(--space-4);">
+                <div class="mb-4">
                     <div class="row-between">
                         <span class="font-bold text-gold"><?= e($k['kode']) ?></span>
                         <span class="badge badge-gold"><?= e($k['bobot']) ?></span>
                     </div>
-                    <h3 style="margin: var(--space-2) 0 0; font-size: var(--text-lg);"><?= e($k['nama']) ?></h3>
+                    <h3 class="criteria-title"><?= e($k['nama']) ?></h3>
                     <div class="meta-text">Benefit</div>
                 </div>
 
-                <div class="stack" style="gap: var(--space-2);">
+                <div class="stack gap-2">
                     <?php foreach ($ratingOptions as $rating => $label): ?>
-                        <label class="rating-option <?= (string) $val === (string) $rating ? 'selected' : '' ?>" style="cursor: pointer;">
-                            <input type="radio" name="<?= e($key) ?>" value="<?= e((string) $rating) ?>" <?= (string) $val === (string) $rating ? 'checked' : '' ?> required style="margin-right: var(--space-3);">
+                        <label class="rating-option <?= (string) $val === (string) $rating ? 'selected' : '' ?>">
+                            <input type="radio" name="<?= e($key) ?>" value="<?= e((string) $rating) ?>" <?= (string) $val === (string) $rating ? 'checked' : '' ?> required>
                             <span class="font-semibold"><?= e((string) $rating) ?></span>
-                            <span class="text-secondary" style="margin-left: var(--space-2);"><?= e($label) ?></span>
+                            <span class="text-secondary"><?= e($label) ?></span>
                         </label>
                     <?php endforeach; ?>
                 </div>
                 <?php if (!empty($errors[$key])): ?>
-                    <div class="form-error" style="margin-top: var(--space-3);"><?= e($errors[$key]) ?></div>
+                    <div class="form-error mt-3"><?= e($errors[$key]) ?></div>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>

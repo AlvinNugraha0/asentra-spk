@@ -7,12 +7,12 @@
 /** @var array<string, mixed> $errors */
 /** @var array<string, mixed> $old */
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
     <p class="page-subtitle"><?= e($subtitle) ?></p>
 </div>
 
-<div class="card">
+<div class="card" data-reveal="up">
     <form method="POST" action="<?= route('/admin/kriteria/update') ?>">
         <?= csrfField() ?>
         <div class="table-wrap">
@@ -38,7 +38,7 @@
                             </td>
                             <td><span class="badge badge-neutral"><?= e(ucfirst($k['atribut'])) ?></span></td>
                             <td>
-                                <input type="number" step="0.01" min="0" max="1" name="kriteria[<?= e((string) $k['id']) ?>][bobot]" class="input" value="<?= e((string) ($old['kriteria'][$k['id']]['bobot'] ?? $k['bobot'])) ?>" required style="max-width: 120px;">
+                                <input type="number" step="0.01" min="0" max="1" name="kriteria[<?= e((string) $k['id']) ?>][bobot]" class="input" value="<?= e((string) ($old['kriteria'][$k['id']]['bobot'] ?? $k['bobot'])) ?>" required class="input input-width-sm">
                                 <?php if (!empty($errors[$k['id']]['bobot'])): ?>
                                     <div class="form-error"><?= e($errors[$k['id']]['bobot']) ?></div>
                                 <?php endif; ?>
@@ -52,12 +52,12 @@
             </table>
         </div>
 
-        <div class="row-between" style="margin-top: var(--space-5);">
+        <div class="row-between mt-5">
             <div>
-                <span class="text-secondary" style="font-size: var(--text-sm);">Total Bobot</span>
+                <span class="text-secondary text-sm">Total Bobot</span>
                 <div class="font-bold text-gold weight-big"><?= e(weightPercent($totalBobot)) ?></div>
                 <?php if (!$valid): ?>
-                    <div class="form-error" style="margin-top: var(--space-1);"><?= e($errors['total'] ?? 'Total bobot harus 100%.') ?></div>
+                    <div class="form-error mt-1"><?= e($errors['total'] ?? 'Total bobot harus 100%.') ?></div>
                 <?php endif; ?>
             </div>
             <div class="row">

@@ -15,7 +15,7 @@
         </div>
         <div class="empty-state-title">Belum Ada Data Laporan</div>
         <p>Belum ada hasil ranking SAW yang diproses. Jalankan perhitungan dari menu Hasil Ranking terlebih dahulu.</p>
-        <a href="<?= route('/owner/ranking') ?>" class="btn btn-primary" style="margin-top: var(--space-4);">Buka Hasil Ranking</a>
+        <a href="<?= route('/owner/ranking') ?>" class="btn btn-primary mt-4">Buka Hasil Ranking</a>
     </div>
 <?php else: ?>
     <div class="card">

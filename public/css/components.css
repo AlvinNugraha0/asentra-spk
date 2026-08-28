@@ -12,6 +12,11 @@
     background: var(--bg-elevated);
 }
 
+/* Constrained-width single-column form card */
+.card-form {
+    max-width: 640px;
+}
+
 .card-title {
     font-size: var(--text-md);
     font-weight: var(--font-semibold);
@@ -32,6 +37,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    min-width: 0; /* ponytail: allows grid shrink so text-overflow ellipsis works on long names */
 }
 
 .kpi-header {
@@ -51,6 +57,12 @@
 .kpi-meta {
     font-size: var(--text-xs);
     color: var(--text-muted);
+}
+
+.criteria-title {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
 }
 
 /* Buttons */
@@ -151,7 +163,7 @@
     padding: var(--space-3) var(--space-4);
     color: var(--text-primary);
     outline: none;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
 }
 
 .input:focus {
@@ -175,6 +187,10 @@
     margin-bottom: var(--space-5);
 }
 
+.input-width-sm {
+    max-width: 120px;
+}
+
 .form-error {
     color: var(--danger);
     font-size: var(--text-xs);
@@ -194,7 +210,7 @@
     padding-right: 40px;
     color: var(--text-primary);
     outline: none;
-    transition: border-color var(--transition-fast);
+    transition: border-color var(--motion-fast);
 }
 
 .select:focus {
@@ -461,6 +477,18 @@
     flex-wrap: wrap;
 }
 
+.filter-select {
+    min-width: 160px;
+}
+
+.filter-select-lg {
+    min-width: 200px;
+}
+
+.search-bar-flex {
+    min-width: 240px;
+}
+
 /* Status dot */
 .status-dot {
     width: 6px;
@@ -483,7 +511,8 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--bg-surface);
-    transition: all var(--transition-fast);
+    cursor: pointer;
+    transition: all var(--motion-fast);
 }
 
 .rating-option:hover {
@@ -500,6 +529,14 @@
     width: 18px;
     height: 18px;
     margin: 0;
+}
+
+.rating-option input[type="radio"] {
+    margin-right: var(--space-3);
+}
+
+.rating-option .text-secondary {
+    margin-left: var(--space-2);
 }
 
 /* Detail SAW flow */
@@ -559,6 +596,20 @@
     font-size: var(--text-lg);
     font-weight: var(--font-bold);
     color: var(--text-primary);
+}
+
+.saw-flow-card-highlight {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+}
+
+.saw-flow-value-final {
+    font-size: var(--text-3xl);
+    color: var(--gold);
+}
+
+.row-wrap {
+    flex-wrap: wrap;
 }
 
 .saw-formula {
@@ -635,6 +686,9 @@
 
 .kpi-value-gold {
     color: var(--gold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .summary-row {
@@ -725,7 +779,7 @@
 
 .rank-3 {
     background: rgba(214, 178, 76, 0.08);
-    color: var(--gold-dark);
+    color: var(--gold);
 }
 
 .rank-default {
@@ -735,12 +789,12 @@
 
 /* SAW flow connector pulse (subtle, once) */
 .saw-flow-dot {
-    animation: flowPulse 1600ms var(--ease-out) 1;
+    animation: flowPulse 1200ms var(--ease-out) 1;
 }
 
 @keyframes flowPulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(214, 178, 76, 0.15); }
-    50% { box-shadow: 0 0 0 6px rgba(214, 178, 76, 0.25); }
+    0%, 100% { box-shadow: 0 0 0 3px rgba(214, 178, 76, 0.12); }
+    50% { box-shadow: 0 0 0 4px rgba(214, 178, 76, 0.18); }
 }
 
 /* Responsive helpers */
@@ -752,7 +806,7 @@
     height: 38px;
     border-radius: var(--radius-md);
     color: var(--text-secondary);
-    transition: all var(--transition-fast);
+    transition: all var(--motion-fast);
     flex-shrink: 0;
 }
 
@@ -779,7 +833,7 @@
         bottom: 0;
         transform: translateX(-100%);
         z-index: 1000;
-        transition: transform var(--transition-base);
+        transition: transform var(--motion-normal);
     }
 
     .sidebar.open {
@@ -798,7 +852,7 @@
         z-index: 999;
         opacity: 0;
         pointer-events: none;
-        transition: opacity var(--transition-base);
+        transition: opacity var(--motion-normal);
     }
 
     .sidebar-backdrop.show {
@@ -813,4 +867,12 @@
     .topbar {
         padding: 0 var(--space-4);
     }
+}
+
+@media (max-width: 768px) {
+    .topbar .search-bar { display: none; }
+}
+
+@media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: 1fr; }
 }

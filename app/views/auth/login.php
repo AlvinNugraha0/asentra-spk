@@ -20,21 +20,21 @@
     <div class="auth-ambient"></div>
 
     <main class="login-page">
-        <div class="login-card">
-            <div class="login-brand">
+        <div class="login-card" data-reveal-group>
+            <div class="login-brand" data-reveal="up">
                 <div class="logo login-logo">AS</div>
                 <h1 class="login-title"><?= e(APP_NAME) ?></h1>
                 <p class="login-subtitle">Sistem Pendukung Keputusan Penilaian Kinerja Teknisi</p>
             </div>
 
             <?php if (!empty($error)): ?>
-                <div class="auth-error" role="alert">
+                <div class="auth-error" role="alert" data-reveal="up">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                     <span><?= e($error) ?></span>
                 </div>
             <?php endif; ?>
 
-            <form action="<?= route('/login') ?>" method="POST" class="auth-form">
+            <form action="<?= route('/login') ?>" method="POST" class="auth-form" data-reveal="up">
                 <?= csrfField() ?>
                 <div class="form-group">
                     <label class="label" for="username">Username</label>
@@ -47,8 +47,10 @@
                 <button type="submit" class="btn btn-primary btn-auth w-full">Login</button>
             </form>
 
-            <p class="auth-demo">Demo: <span>admin/admin</span> &middot; <span>owner/owner</span></p>
+            <p class="auth-demo" data-reveal="up">Demo: <span>admin/admin</span> &middot; <span>owner/owner</span></p>
         </div>
     </main>
+
+    <script src="<?= asset('js/app.js') ?>"></script>
 </body>
 </html>

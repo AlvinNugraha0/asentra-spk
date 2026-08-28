@@ -87,11 +87,11 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
                 </ul>
             <?php endif; ?>
 
-            <ul class="nav-list" style="margin-top: auto;">
+            <ul class="nav-list mt-auto">
                 <li class="nav-item">
-                    <form action="<?= route('/logout') ?>" method="POST" style="margin: 0; width: 100%;">
+                    <form action="<?= route('/logout') ?>" method="POST" class="form-reset w-full">
                         <?= csrfField() ?>
-                        <button type="submit" class="nav-link" aria-label="Logout" style="width: 100%; border: none; background: transparent;">
+                        <button type="submit" class="nav-link" aria-label="Logout">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
                         </button>
                     </form>

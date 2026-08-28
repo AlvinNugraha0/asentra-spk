@@ -56,8 +56,12 @@
         <h2 class="card-title">Penilaian Terbaru</h2>
         <p class="card-subtitle">Data input penilaian kinerja teknisi terakhir.</p>
         <?php if (empty($recent)): ?>
-            <div class="empty-state" style="padding: var(--space-8) 0;">
-                <p>Belum ada data penilaian.</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                </div>
+                <div class="empty-state-title">Belum Ada Data Penilaian</div>
+                <p>Mulai dengan input penilaian teknisi.</p>
             </div>
         <?php else: ?>
             <div class="table-wrap">
@@ -76,7 +80,7 @@
                             <tr>
                                 <td>
                                     <strong><?= e($r['kode_teknisi']) ?></strong>
-                                    <span class="text-muted" style="margin-left: var(--space-2);"><?= e($r['nama_teknisi']) ?></span>
+                                    <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
                                 </td>
                                 <td><?= e(periodLabel($r['periode'])) ?></td>
                                 <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
@@ -93,7 +97,7 @@
     <div class="card">
         <h2 class="card-title">Ringkasan Kriteria</h2>
         <p class="card-subtitle">Bobot dan atribut penilaian SAW.</p>
-        <div class="stack" style="margin-top: var(--space-4);">
+        <div class="stack mt-4">
             <?php foreach ($kriteria as $k): ?>
                 <div class="summary-row">
                     <div>
@@ -105,7 +109,7 @@
             <?php endforeach; ?>
         </div>
         <?php if (!$bobotValid): ?>
-            <div class="badge badge-danger" style="margin-top: var(--space-4);">
+            <div class="badge badge-danger mt-4">
                 Total bobot harus 100%
             </div>
         <?php endif; ?>

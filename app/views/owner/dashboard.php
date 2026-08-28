@@ -55,11 +55,11 @@
         </div>
         <div class="empty-state-title">Belum ada hasil SAW</div>
         <p>Pilih periode dan jalankan perhitungan SAW di menu Hasil Ranking.</p>
-        <a href="<?= route('/owner/ranking') ?>" class="btn btn-primary" style="margin-top: var(--space-4);">Hitung SAW</a>
+        <a href="<?= route('/owner/ranking') ?>" class="btn btn-primary mt-4">Hitung SAW</a>
     </div>
 <?php else: ?>
-    <div class="card" style="margin-bottom: var(--space-6);" data-reveal="up">
-        <div class="row-between" style="margin-bottom: var(--space-5);">
+    <div class="card mb-6" data-reveal="up">
+        <div class="row-between mb-5">
             <div>
                 <h2 class="card-title">Ranking Terakhir — <?= e(periodLabel($processedPeriode)) ?></h2>
                 <p class="card-subtitle"><?= e((string) $evaluatedCount) ?> teknisi dievaluasi.</p>
@@ -84,7 +84,7 @@
                             <td><?= e(rankBadge((int) $r['ranking'])) ?></td>
                             <td>
                                 <strong><?= e($r['kode_teknisi']) ?></strong>
-                                <span class="text-muted" style="margin-left: var(--space-2);"><?= e($r['nama_teknisi']) ?></span>
+                                <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
                             </td>
                             <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
                             <td><span class="badge badge-neutral"><?= e((string) $r['c2']) ?></span></td>

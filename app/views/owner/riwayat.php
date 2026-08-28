@@ -11,8 +11,8 @@
 </div>
 
 <div class="action-bar">
-    <form method="GET" action="<?= route('/owner/riwayat') ?>" class="filter-group" style="flex: 1;">
-        <select name="periode" class="select" style="min-width: 200px;" onchange="this.form.submit()">
+    <form method="GET" action="<?= route('/owner/riwayat') ?>" class="filter-group flex-1">
+        <select name="periode" class="select filter-select-lg" onchange="this.form.submit()">
             <option value="">Pilih periode</option>
             <?php foreach ($periods as $p): ?>
                 <option value="<?= e($p) ?>" <?= $periode === $p ? 'selected' : '' ?>><?= e(periodLabel($p)) ?></option>
@@ -39,11 +39,11 @@
         </div>
         <div class="empty-state-title">Belum Ada Riwayat</div>
         <p>Belum ada hasil SAW yang tersimpan untuk periode <strong><?= e(periodLabel($periode)) ?></strong>. Jalankan perhitungan dari menu Hasil Ranking.</p>
-        <a href="<?= route('/owner/ranking?periode=' . urlencode($periode)) ?>" class="btn btn-primary" style="margin-top: var(--space-4);">Buka Hasil Ranking</a>
+        <a href="<?= route('/owner/ranking?periode=' . urlencode($periode)) ?>" class="btn btn-primary mt-4">Buka Hasil Ranking</a>
     </div>
 <?php else: ?>
     <div class="card">
-        <div class="row-between" style="margin-bottom: var(--space-5);">
+        <div class="row-between mb-5">
             <div>
                 <h2 class="card-title">Riwayat — <?= e(periodLabel($periode)) ?></h2>
                 <p class="card-subtitle">Periode terisolasi dari periode lain. Hasil berasal dari proses SAW terakhir.</p>
@@ -72,7 +72,7 @@
                             </td>
                             <td>
                                 <strong><?= e($r['kode_teknisi']) ?></strong>
-                                <span class="text-muted" style="margin-left: var(--space-2);"><?= e($r['nama_teknisi']) ?></span>
+                                <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
                             </td>
                             <td class="font-bold text-gold tabular"><?= e(scoreFormat((float) $r['nilai_preferensi'], 3)) ?></td>
                             <td>

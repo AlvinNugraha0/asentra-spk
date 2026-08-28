@@ -67,6 +67,9 @@ img {
 
 .tabular { font-variant-numeric: tabular-nums; }
 
+/* Technician name label following its code */
+strong + .text-muted { margin-left: var(--space-2); }
+
 /* Layout */
 /* Ambient background — subtle, near-invisible gradient drift (MOTION.md §17,
    DESIGN.md §5 "optional subtle radial/ambient lighting at very low opacity").
@@ -184,7 +187,7 @@ img {
     aspect-ratio: 1;
     border-radius: var(--radius-md);
     color: var(--text-muted);
-    transition: all var(--transition-fast);
+    transition: all var(--motion-fast);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -394,7 +397,7 @@ img {
     color: var(--bg-app);
     border-radius: var(--radius-md);
     font-weight: var(--font-semibold);
-    transition: top var(--transition-fast);
+    transition: top var(--motion-fast);
 }
 
 .skip-link:focus {
@@ -413,9 +416,17 @@ img {
 .mt-1 { margin-top: var(--space-1); }
 .mt-2 { margin-top: var(--space-2); }
 .mt-4 { margin-top: var(--space-4); }
+.mt-auto { margin-top: auto; }
 .mb-2 { margin-bottom: var(--space-2); }
 .mb-4 { margin-bottom: var(--space-4); }
 .mb-6 { margin-bottom: var(--space-6); }
+.form-reset { margin: 0; }
+.mt-3 { margin-top: var(--space-3); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
+.mb-0 { margin-bottom: 0; }
+.mb-5 { margin-bottom: var(--space-5); }
+.flex-1 { flex: 1; }
 
 /* Scrollbar */
 ::-webkit-scrollbar {

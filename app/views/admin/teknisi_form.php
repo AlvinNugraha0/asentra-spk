@@ -11,11 +11,11 @@ $nama = $teknisi['nama'] ?? ($old['nama'] ?? '');
 $status = $teknisi['status'] ?? ($old['status'] ?? 'active');
 $keterangan = $teknisi['keterangan'] ?? ($old['keterangan'] ?? '');
 ?>
-<div class="page-header">
+<div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
 </div>
 
-<div class="card" style="max-width: 640px;">
+<div class="card card-form" data-reveal="up">
     <form method="POST" action="<?= route($isEdit ? '/admin/teknisi/update' : '/admin/teknisi/store') ?>">
         <?= csrfField() ?>
         <?php if ($isEdit): ?>
@@ -51,7 +51,7 @@ $keterangan = $teknisi['keterangan'] ?? ($old['keterangan'] ?? '');
             <textarea id="keterangan" name="keterangan" class="input" rows="3" placeholder="Keterangan opsional"><?= e($keterangan) ?></textarea>
         </div>
 
-        <div class="row-end" style="margin-top: var(--space-6);">
+        <div class="row-end mt-6">
             <a href="<?= route('/admin/teknisi') ?>" class="btn btn-secondary">Batal</a>
             <button type="submit" class="btn btn-primary"><?= $isEdit ? 'Simpan Perubahan' : 'Simpan Teknisi' ?></button>
         </div>

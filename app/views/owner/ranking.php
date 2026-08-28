@@ -11,8 +11,8 @@
 </div>
 
 <div class="action-bar" data-reveal="up">
-    <form method="GET" action="<?= route('/owner/ranking') ?>" class="filter-group" style="flex: 1;">
-        <select name="periode" class="select" style="min-width: 200px;" onchange="this.form.submit()">
+    <form method="GET" action="<?= route('/owner/ranking') ?>" class="filter-group flex-1">
+        <select name="periode" class="select filter-select-lg" onchange="this.form.submit()">
             <option value="">Pilih periode</option>
             <?php foreach ($periods as $p): ?>
                 <option value="<?= e($p) ?>" <?= $periode === $p ? 'selected' : '' ?>><?= e(periodLabel($p)) ?></option>
@@ -29,7 +29,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
                 Cetak Laporan
             </a>
-            <form method="POST" action="<?= route('/owner/ranking/process') ?>" style="margin: 0;" data-loading>
+            <form method="POST" action="<?= route('/owner/ranking/process') ?>" class="form-reset" data-loading>
                 <?= csrfField() ?>
                 <input type="hidden" name="periode" value="<?= e($periode) ?>">
                 <button type="submit" class="btn btn-primary">
@@ -56,7 +56,7 @@
         </div>
         <div class="empty-state-title">Data Ranking Tidak Tersedia</div>
         <p>Periode <strong><?= e(periodLabel($periode)) ?></strong> memiliki data penilaian, tetapi belum diproses dengan SAW.</p>
-        <form method="POST" action="<?= route('/owner/ranking/process') ?>" style="margin-top: var(--space-4);" data-loading>
+        <form method="POST" action="<?= route('/owner/ranking/process') ?>" class="mt-4" data-loading>
             <?= csrfField() ?>
             <input type="hidden" name="periode" value="<?= e($periode) ?>">
             <button type="submit" class="btn btn-primary">Proses SAW Sekarang</button>
@@ -64,7 +64,7 @@
     </div>
 <?php else: ?>
     <div class="card" data-reveal="up">
-        <div class="row-between" style="margin-bottom: var(--space-5);">
+        <div class="row-between mb-5">
             <div>
                 <h2 class="card-title">Ranking SAW — <?= e(periodLabel($periode)) ?></h2>
                 <p class="card-subtitle">Hasil perhitungan berdasarkan kriteria C1, C2, dan C3.</p>
@@ -90,7 +90,7 @@
                             <td><?= rankBadge((int) $r['ranking']) ?></td>
                             <td>
                                 <strong><?= e($r['kode_teknisi']) ?></strong>
-                                <span class="text-muted" style="margin-left: var(--space-2);"><?= e($r['nama_teknisi']) ?></span>
+                                <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
                             </td>
                             <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
                             <td><span class="badge badge-neutral"><?= e((string) $r['c2']) ?></span></td>
