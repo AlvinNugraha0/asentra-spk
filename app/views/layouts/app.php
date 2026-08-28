@@ -25,6 +25,7 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
     <link rel="stylesheet" href="<?= asset('css/components.css') ?>">
 </head>
 <body>
+    <div class="ambient" aria-hidden="true"></div>
     <a href="#main-content" class="skip-link">Langsung ke konten</a>
 
     <div class="app-shell">
