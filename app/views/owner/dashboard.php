@@ -7,104 +7,174 @@
 /** @var int $evaluatedCount */
 /** @var ?array<string, mixed> $topResult */
 /** @var array<int, array<string, mixed>> $results */
+$user = currentUser() ?? [];
+$userName = $user['nama'] ?? 'Owner';
 ?>
-<div class="page-header" data-reveal="up">
-    <h1 class="page-title"><?= e($title) ?></h1>
-    <p class="page-subtitle"><?= e($subtitle) ?></p>
-</div>
 
-<div class="kpi-grid" data-reveal-group>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Periode Terbaru</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11v6"/><path d="M9 14h6"/></svg>
+<!-- Welcome Banner -->
+<div class="welcome-banner" data-reveal="up">
+    <div class="welcome-banner-content">
+        <div class="welcome-banner-top">
+            <div>
+                <h1>Welcome back, <?= e($userName) ?></h1>
+                <p>Pantau hasil evaluasi dan ranking kinerja teknisi.</p>
+            </div>
+            <div class="welcome-banner-actions">
+                <a href="<?= route('/owner/ranking') ?>" class="btn-banner">
+                    <i class="ph ph-trophy text-lg"></i>
+                    Hasil Ranking
+                </a>
+            </div>
         </div>
-        <div class="kpi-value tabular kpi-value-sm"><?= $latestPeriode ? e(periodLabel($latestPeriode)) : '-' ?></div>
-        <div class="kpi-meta">Data penilaian terakhir</div>
-    </div>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Teknisi Aktif</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+
+        <!-- Embedded Stats -->
+        <div class="welcome-stats">
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-calendar-blank text-lg"></i>
+                    Periode Terbaru
+                </div>
+                <div class="welcome-stat-value" style="font-size: var(--text-lg);"><?= $latestPeriode ? e(periodLabel($latestPeriode)) : '-' ?></div>
+                <div class="welcome-stat-meta">Data penilaian terakhir</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-users text-lg"></i>
+                    Teknisi Aktif
+                </div>
+                <div class="welcome-stat-value tabular" data-count="<?= e((string) $activeTeknisi) ?>"><?= e((string) $activeTeknisi) ?></div>
+                <div class="welcome-stat-meta">Total teknisi aktif</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-trophy text-lg"></i>
+                    Peringkat #1
+                </div>
+                <div class="welcome-stat-value" style="font-size: var(--text-lg); color: var(--gold-light);"><?= $topResult ? e($topResult['nama_teknisi']) : '-' ?></div>
+                <div class="welcome-stat-meta">Teknisi terbaik</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-chart-line-up text-lg"></i>
+                    Skor Tertinggi
+                </div>
+                <div class="welcome-stat-value tabular" style="color: var(--gold-light);"><?= $topResult ? e(scoreFormat((float) $topResult['nilai_preferensi'], 3)) : '-' ?></div>
+                <div class="welcome-stat-meta">Nilai SAW</div>
+            </div>
         </div>
-        <div class="kpi-value tabular" data-count="<?= e((string) $activeTeknisi) ?>"><?= e((string) $activeTeknisi) ?></div>
-        <div class="kpi-meta">Total teknisi aktif</div>
-    </div>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Peringkat #1</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-        </div>
-        <div class="kpi-value tabular kpi-value-gold"><?= $topResult ? e($topResult['nama_teknisi']) : '-' ?></div>
-        <div class="kpi-meta">Teknisi terbaik</div>
-    </div>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Skor Tertinggi</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.5a4.5 4.5 0 1 1 4.5 4.5M12 7.5A4.5 4.5 0 1 0 7.5 12M12 7.5V9m-4.5 3a4.5 4.5 0 1 0 4.5 4.5M7.5 12H9"/><circle cx="12" cy="12" r="10"/></svg>
-        </div>
-        <div class="kpi-value tabular kpi-value-gold"><?= $topResult ? e(scoreFormat((float) $topResult['nilai_preferensi'], 3)) : '-' ?></div>
-        <div class="kpi-meta">Nilai SAW</div>
     </div>
 </div>
 
 <?php if ($processedPeriode === null): ?>
     <div class="card empty-state" data-reveal="scale">
         <div class="empty-state-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            <i class="ph ph-warning-circle text-3xl"></i>
         </div>
         <div class="empty-state-title">Belum ada hasil SAW</div>
         <p>Pilih periode dan jalankan perhitungan SAW di menu Hasil Ranking.</p>
         <a href="<?= route('/owner/ranking') ?>" class="btn btn-primary mt-4">Hitung SAW</a>
     </div>
 <?php else: ?>
-    <div class="card mb-6" data-reveal="up">
-        <div class="row-between mb-5">
-            <div>
-                <h2 class="card-title">Ranking Terakhir — <?= e(periodLabel($processedPeriode)) ?></h2>
-                <p class="card-subtitle"><?= e((string) $evaluatedCount) ?> teknisi dievaluasi.</p>
+
+    <!-- Main Content Grid: Ranking Table (2/3) + Top Performers (1/3) -->
+    <div class="grid-2-1" data-reveal="up">
+
+        <!-- Ranking Table -->
+        <div class="card">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <h3>Ranking Terakhir — <?= e(periodLabel($processedPeriode)) ?></h3>
+                    <p><?= e((string) $evaluatedCount) ?> teknisi dievaluasi.</p>
+                </div>
+                <a href="<?= route('/owner/ranking?periode=' . urlencode($processedPeriode)) ?>" class="btn-link">Lihat Detail</a>
             </div>
-            <a href="<?= route('/owner/ranking?periode=' . urlencode($processedPeriode)) ?>" class="btn btn-secondary">Lihat Detail</a>
-        </div>
-        <div class="table-wrap">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>RANK</th>
-                        <th>TEKNISI</th>
-                        <th>C1</th>
-                        <th>C2</th>
-                        <th>C3</th>
-                        <th>NILAI SAW</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach (array_slice($results, 0, 5) as $r): ?>
+
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td><?= e(rankBadge((int) $r['ranking'])) ?></td>
-                            <td>
-                                <strong><?= e($r['kode_teknisi']) ?></strong>
-                                <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
-                            </td>
-                            <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
-                            <td><span class="badge badge-neutral"><?= e((string) $r['c2']) ?></span></td>
-                            <td><span class="badge badge-neutral"><?= e((string) $r['c3']) ?></span></td>
-                            <td class="font-bold text-gold tabular"><?= e(scoreFormat((float) $r['nilai_preferensi'], 3)) ?></td>
+                            <th>Rank</th>
+                            <th>Teknisi</th>
+                            <th>C1</th>
+                            <th>C2</th>
+                            <th>C3</th>
+                            <th>Nilai SAW</th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach (array_slice($results, 0, 5) as $r): ?>
+                            <tr>
+                                <td><?= e(rankBadge((int) $r['ranking'])) ?></td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="tech-avatar tech-avatar-blue"><?= e(strtoupper(mb_substr($r['nama_teknisi'], 0, 2))) ?></div>
+                                        <div>
+                                            <strong><?= e($r['nama_teknisi']) ?></strong>
+                                            <div class="meta-text"><?= e($r['kode_teknisi']) ?></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
+                                <td><span class="badge badge-neutral"><?= e((string) $r['c2']) ?></span></td>
+                                <td><span class="badge badge-neutral"><?= e((string) $r['c3']) ?></span></td>
+                                <td class="font-bold tabular" style="color: var(--brand);"><?= e(scoreFormat((float) $r['nilai_preferensi'], 3)) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right: Top Performers + Quick Actions -->
+        <div class="stack" style="gap: var(--space-6);">
+
+            <!-- Top Performers Card -->
+            <?php if (!empty($results)): ?>
+            <div class="card">
+                <div class="section-header">
+                    <div class="section-header-left">
+                        <h3>Top Teknisi</h3>
+                        <p>Peringkat tertinggi periode ini.</p>
+                    </div>
+                </div>
+
+                <div class="stack">
+                    <?php foreach (array_slice($results, 0, 3) as $idx => $r): ?>
+                        <div class="top-performer-item">
+                            <div class="performer-avatar <?= $idx === 0 ? 'performer-avatar-gold' : 'performer-avatar-silver' ?>">
+                                <?= e(strtoupper(mb_substr($r['nama_teknisi'], 0, 2))) ?>
+                                <span class="performer-rank <?= $idx === 0 ? 'performer-rank-gold' : 'performer-rank-default' ?>"><?= e((string) ($idx + 1)) ?></span>
+                            </div>
+                            <div class="performer-info">
+                                <div class="performer-name"><?= e($r['nama_teknisi']) ?></div>
+                                <div class="performer-meta"><?= e($r['kode_teknisi']) ?></div>
+                            </div>
+                            <div class="performer-score">
+                                <span class="performer-score-value"><?= e(scoreFormat((float) $r['nilai_preferensi'], 3)) ?></span>
+                                <span class="performer-score-label">Skor Akhir</span>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- Quick Actions -->
+            <div class="quick-action-grid">
+                <a href="<?= route('/owner/ranking') ?>" class="quick-action">
+                    <div class="quick-action-icon">
+                        <i class="ph ph-trophy text-2xl"></i>
+                    </div>
+                    <span class="quick-action-label">Hasil Ranking</span>
+                </a>
+                <a href="<?= route('/owner/riwayat') ?>" class="quick-action">
+                    <div class="quick-action-icon">
+                        <i class="ph ph-clock-counter-clockwise text-2xl"></i>
+                    </div>
+                    <span class="quick-action-label">Riwayat Ranking</span>
+                </a>
+            </div>
         </div>
     </div>
-<?php endif; ?>
 
-<div class="row" data-reveal="up">
-    <a href="<?= route('/owner/ranking') ?>" class="btn btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-        Hasil Ranking
-    </a>
-    <a href="<?= route('/owner/riwayat') ?>" class="btn btn-secondary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        Riwayat Ranking
-    </a>
-</div>
+<?php endif; ?>

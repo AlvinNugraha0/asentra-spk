@@ -15,10 +15,9 @@
     <link rel="stylesheet" href="<?= asset('css/components.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/auth.css') ?>">
 </head>
-<body class="auth-body">
-    <div class="auth-ambient"></div>
+<body class="error-body">
     <main class="error-body">
-        <div class="error-card login-card">
+        <div class="error-card">
             <div class="error-code">404</div>
             <h1 class="error-title">Halaman Tidak Ditemukan</h1>
             <p class="error-text">URL yang Anda tuju tidak tersedia di aplikasi ini.</p>

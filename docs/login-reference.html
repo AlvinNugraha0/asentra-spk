@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - ASENTRA SPK</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#0052cc', // Primary blue from reference
+                            lightBlue: '#eef2fb', // Light background for inputs
+                            darkBlue: '#002663', // Darker blue for gradients/buttons
+                            textPrimary: '#1f2937', // Dark gray text
+                            textSecondary: '#6b7280', // Medium gray text
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'blue-pattern': 'linear-gradient(135deg, #001f5c 0%, #0056cc 50%, #0084ff 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0076f5 0%, #0047bf 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        /* Soft shadow for the main card */
+        .card-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Custom Input Neumorphic/Soft styling */
+        .soft-input-group {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+        }
+
+        .soft-input-group:focus-within {
+            border-color: #0052cc;
+            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+        }
+
+        .soft-input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            padding: 0.75rem;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .soft-input::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        .icon-box {
+            background-color: #dbeafe;
+            /* Light blue bg for icon */
+            color: #3b82f6;
+            /* Blue icon color */
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+        }
+
+        /* Diagonal lines background effect for the left panel */
+        .diagonal-bg {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diagonal-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 255, 255, 0.05) 10px,
+                    rgba(255, 255, 255, 0.05) 11px);
+            pointer-events: none;
+        }
+
+        /* Abstract shapes for left panel */
+        .shape-blob {
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes morph {
+            0% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+                transform: scale(1);
+            }
+
+            100% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Custom Checkbox */
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.25em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+
+        .custom-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            background-color: white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .custom-checkbox:checked {
+            background-color: #0052cc;
+            border-color: #0052cc;
+        }
+
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8">
+
+    <!-- Main Container: Split Screen Card -->
+    <main
+        class="w-full max-w-[900px] bg-white rounded-3xl card-shadow flex flex-col md:flex-row overflow-hidden relative z-10 mx-auto min-h-[500px]">
+
+        <!-- Left Panel: Branding & Welcome (Hidden on very small screens) -->
+        <div
+            class="hidden md:flex md:w-1/2 bg-blue-pattern diagonal-bg p-10 flex-col justify-between text-white relative">
+
+            <!-- Logo Area -->
+            <div class="flex items-center space-x-3 z-10">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <span class="text-brand-blue font-bold text-lg">AS</span>
+                </div>
+                <div class="font-bold text-xl tracking-wide leading-tight">
+                    ASENTRA<br /><span class="font-normal text-sm opacity-80">SPK System</span>
+                </div>
+            </div>
+
+            <!-- Welcome Text -->
+            <div class="z-10 mt-12">
+                <h1 class="text-5xl font-extrabold mb-4 leading-tight">Hello,<br />welcome!</h1>
+                <p class="text-sm opacity-80 leading-relaxed max-w-[280px]">
+                    Sistem Pendukung Keputusan Penilaian Kinerja Teknisi. Silakan masuk untuk melanjutkan aktivitas
+                    Anda.
+                </p>
+
+                <!-- Optional 'View more' button from reference -->
+                <button
+                    class="mt-8 px-6 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full text-sm font-medium transition-colors">
+                    View more
+                </button>
+            </div>
+
+            <!-- Decorative Shapes -->
+            <div class="shape-blob"></div>
+            <!-- Add a few glowing dots -->
+            <div class="absolute top-20 right-10 w-2 h-2 bg-white rounded-full opacity-50 blur-[1px]"></div>
+            <div class="absolute bottom-40 right-20 w-3 h-3 bg-white rounded-full opacity-30 blur-[2px]"></div>
+        </div>
+
+        <!-- Right Panel: Login Form -->
+        <div class="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center bg-gray-50/50">
+
+            <!-- Mobile Logo (visible only on small screens) -->
+            <div class="md:hidden flex items-center justify-center space-x-2 mb-8">
+                <div class="w-10 h-10 bg-brand-blue rounded-full flex items-center justify-center shadow-md">
+                    <span class="text-white font-bold text-lg">AS</span>
+                </div>
+                <h1 class="font-bold text-xl text-brand-textPrimary">ASENTRA SPK</h1>
+            </div>
+
+            <div class="w-full max-w-[360px] mx-auto">
+                <form id="loginForm" class="space-y-6">
+
+                    <!-- Username / Email Field -->
+                    <div>
+                        <div class="soft-input-group">
+                            <div class="icon-box">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="w-full">
+                                <label for="username"
+                                    class="block text-[10px] font-semibold text-brand-textSecondary uppercase tracking-wider px-1">Username
+                                    / Email</label>
+                                <input type="text" id="username" name="username" required placeholder="name@mail.com"
+                                    class="soft-input pt-1 pb-1" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <div class="soft-input-group relative">
+                            <div class="icon-box">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="w-full">
+                                <label for="password"
+                                    class="block text-[10px] font-semibold text-brand-textSecondary uppercase tracking-wider px-1">Password</label>
+                                <input type="password" id="password" name="password" required placeholder="••••••••••••"
+                                    class="soft-input pt-1 pb-1 pr-10" />
+                            </div>
+                            <!-- Toggle Password Button -->
+                            <button type="button" onclick="togglePassword()"
+                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-blue transition-colors focus:outline-none">
+                                <svg id="eyeIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Options: Remember me & Forgot Password -->
+                    <div class="flex items-center justify-between mt-4">
+                        <label class="flex items-center space-x-2 cursor-pointer group">
+                            <input type="checkbox" class="custom-checkbox" />
+                            <span
+                                class="text-xs font-medium text-brand-textSecondary group-hover:text-brand-textPrimary transition-colors">Remember
+                                me</span>
+                        </label>
+                        <a href="#"
+                            class="text-xs font-medium text-brand-blue hover:text-brand-darkBlue transition-colors">Forgot
+                            password?</a>
+                    </div>
+
+                    <!-- Login Button -->
+                    <div class="pt-2">
+                        <button type="submit" id="submitBtn"
+                            class="w-full bg-white hover:bg-gray-50 text-brand-blue font-bold py-3.5 px-4 rounded-xl shadow-[0_4px_14px_0_rgba(0,82,204,0.1)] hover:shadow-[0_6px_20px_rgba(0,82,204,0.15)] border border-gray-100 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <span id="btnText">Login</span>
+                            <div id="btnSpinner"
+                                class="hidden w-4 h-4 border-2 border-brand-blue border-t-transparent rounded-full animate-spin">
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="mt-8 text-center border-t border-gray-200 pt-6">
+                        <p class="text-xs font-medium text-brand-textSecondary mb-3">Not a member yet?</p>
+                        <!-- Sign Up Button matching reference -->
+                        <button type="button"
+                            class="w-full bg-gradient-to-r from-brand-darkBlue to-brand-blue hover:from-brand-blue hover:to-[#0066ff] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-200">
+                            Sign up
+                        </button>
+                    </div>
+
+                    <!-- Demo Credentials Helper -->
+                    <div class="mt-6 text-center">
+                        <p class="text-[10px] text-gray-400">
+                            Demo: <span class="text-brand-blue cursor-pointer hover:underline"
+                                onclick="setCredentials('admin', 'admin')">admin</span> /
+                            <span class="text-brand-blue cursor-pointer hover:underline"
+                                onclick="setCredentials('owner', 'owner')">owner</span>
+                        </p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm w-full pointer-events-none">
+        <div id="toastBox"
+            class="bg-white border border-gray-100 text-gray-800 p-4 rounded-2xl shadow-2xl flex items-center space-x-3">
+            <div id="toastIcon" class="shrink-0 text-brand-blue">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <p id="toastMessage" class="text-xs font-medium"></p>
+        </div>
+    </div>
+
+    <script>
+        // Autofill demo credentials
+        function setCredentials(user, pass) {
+            const userInput = document.getElementById('username');
+            const passInput = document.getElementById('password');
+            userInput.value = user;
+            passInput.value = pass;
+
+            // Animate focus
+            const userGroup = userInput.closest('.soft-input-group');
+            userGroup.classList.add('ring-2', 'ring-brand-blue', 'ring-opacity-50');
+            setTimeout(() => userGroup.classList.remove('ring-2', 'ring-brand-blue', 'ring-opacity-50'), 500);
+
+            showToast(`Kredensial ${user.toUpperCase()} siap digunakan`, 'info');
+        }
+
+        // Toggle password view
+        function togglePassword() {
+            const passInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+        `;
+            } else {
+                passInput.type = 'password';
+                eyeIcon.innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        `;
+            }
+        }
+
+        // Toast feedback notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+
+            if (type === 'error') {
+                toastIcon.className = 'shrink-0 text-red-500';
+                toastIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            } else {
+                toastIcon.className = 'shrink-0 text-brand-blue';
+                toastIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Pasang Event Listener saat halaman selesai dimuat (lebih aman dari pada onsubmit di HTML)
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('loginForm');
+            if (form) {
+                form.addEventListener('submit', handleLogin);
+            }
+        });
+
+        // Login Form Submission
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Basic Validation
+            if (!user || !pass) {
+                showToast('Username dan password harus diisi', 'error');
+                return;
+            }
+
+            // Loading state
+            if (btnText) btnText.innerText = 'Memproses...';
+            if (btnSpinner) btnSpinner.classList.remove('hidden');
+            if (submitBtn) submitBtn.disabled = true;
+
+            // Simulate API Call
+            setTimeout(() => {
+                if (btnText) btnText.innerText = 'Login';
+                if (btnSpinner) btnSpinner.classList.add('hidden');
+                if (submitBtn) submitBtn.disabled = false;
+
+                if ((user === 'admin' && pass === 'admin') || (user === 'owner' && pass === 'owner')) {
+                    showToast('Login berhasil! Mengalihkan ke Dashboard...', 'success');
+
+                    // Menggunakan nama file statis agar bisa berjalan di preview atau folder lokal
+                    // Nanti jika Anda pasang di Framework (Laravel/Codeigniter), ganti menjadi: window.location.href = '/admin/dashboard';
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1200);
+
+                } else {
+                    showToast('Username atau password salah', 'error');
+                }
+            }, 1500);
+        }
+    </script>
+</body>
+
+</html>

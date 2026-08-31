@@ -10,47 +10,117 @@
     <title><?= e($title) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="<?= asset('css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/base.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/components.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/auth.css') ?>">
 </head>
 <body class="auth-body">
-    <div class="auth-ambient"></div>
 
-    <main class="login-page">
-        <div class="login-card" data-reveal-group>
-            <div class="login-brand" data-reveal="up">
-                <div class="logo login-logo">AS</div>
-                <h1 class="login-title"><?= e(APP_NAME) ?></h1>
-                <p class="login-subtitle">Sistem Pendukung Keputusan Penilaian Kinerja Teknisi</p>
+    <main class="login-page" data-reveal-group>
+
+        <div class="login-card">
+
+            <!-- Left Panel: Branding -->
+            <div class="login-brand-panel">
+                <div class="login-brand-dots" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <div class="login-brand-logo" data-reveal="up">
+                    <div class="logo">AS</div>
+                    <div class="login-brand-logo-text">
+                        <div class="login-brand-logo-name">ASENTRA</div>
+                        <div class="login-brand-logo-sub">SPK System</div>
+                    </div>
+                </div>
+
+                <div class="login-brand-content" data-reveal="up">
+                    <h1>Selamat<br>Datang!</h1>
+                    <p>Sistem Pendukung Keputusan Penilaian Kinerja Teknisi Lapangan. Silakan masuk untuk melanjutkan.</p>
+                </div>
             </div>
 
-            <?php if (!empty($error)): ?>
-                <div class="auth-error" role="alert" data-reveal="up">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                    <span><?= e($error) ?></span>
-                </div>
-            <?php endif; ?>
+            <!-- Right Panel: Login Form -->
+            <div class="login-form-panel">
 
-            <form action="<?= route('/login') ?>" method="POST" class="auth-form" data-reveal="up">
-                <?= csrfField() ?>
-                <div class="form-group">
-                    <label class="label" for="username">Username</label>
-                    <input type="text" id="username" name="username" class="input input-auth" placeholder="Masukkan username" required autofocus autocomplete="username">
+                <!-- Mobile Logo (visible only on small screens) -->
+                <div class="login-mobile-logo" data-reveal="up">
+                    <div class="logo">AS</div>
+                    <h1><?= e(APP_NAME) ?></h1>
                 </div>
-                <div class="form-group">
-                    <label class="label" for="password">Password</label>
-                    <input type="password" id="password" name="password" class="input input-auth" placeholder="Masukkan password" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-auth w-full">Login</button>
-            </form>
 
-            <p class="auth-demo" data-reveal="up">Demo: <span>admin/admin</span> &middot; <span>owner/owner</span></p>
+                <div class="login-form-inner">
+
+                    <?php if (!empty($error)): ?>
+                        <div class="auth-error" role="alert" data-reveal="up">
+                            <i class="ph ph-warning-circle text-lg"></i>
+                            <span><?= e($error) ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="<?= route('/login') ?>" method="POST" class="auth-form" data-reveal="up">
+                        <?= csrfField() ?>
+
+                        <!-- Username Field -->
+                        <div class="soft-input-group">
+                            <div class="input-icon-box">
+                                <i class="ph ph-user text-xl"></i>
+                            </div>
+                            <div class="soft-input-content">
+                                <label class="soft-input-label" for="username">Username</label>
+                                <input type="text" id="username" name="username" class="soft-input" placeholder="Masukkan username" required autofocus autocomplete="username">
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="soft-input-group">
+                            <div class="input-icon-box">
+                                <i class="ph ph-lock-key text-xl"></i>
+                            </div>
+                            <div class="soft-input-content">
+                                <label class="soft-input-label" for="password">Password</label>
+                                <input type="password" id="password" name="password" class="soft-input" placeholder="••••••••••" required autocomplete="current-password">
+                            </div>
+                            <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="Tampilkan password">
+                                <i id="eyeIcon" class="ph ph-eye text-xl"></i>
+                            </button>
+                        </div>
+
+                        <!-- Login Button -->
+                        <div style="margin-top: var(--space-6);">
+                            <button type="submit" class="btn-login" id="submitBtn">
+                                <span id="btnText">Masuk</span>
+                                <div id="btnSpinner" class="btn-spinner" style="display: none;"></div>
+                            </button>
+                        </div>
+                    </form>
+
+                    <p class="auth-demo" data-reveal="up">
+                        Demo: <span>admin / admin</span> &middot; <span>owner / owner</span>
+                    </p>
+                </div>
+            </div>
+
         </div>
     </main>
 
     <script src="<?= asset('js/app.js') ?>"></script>
+    <script>
+        function togglePassword() {
+            var passInput = document.getElementById('password');
+            var eyeIcon = document.getElementById('eyeIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.className = 'ph ph-eye-slash text-xl';
+            } else {
+                passInput.type = 'password';
+                eyeIcon.className = 'ph ph-eye text-xl';
+            }
+        }
+    </script>
 </body>
 </html>

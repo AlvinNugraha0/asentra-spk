@@ -10,55 +10,81 @@
 /** @var float $totalBobot */
 /** @var array<int, array<string, mixed>> $kriteria */
 /** @var array<int, array<string, mixed>> $recent */
+$user = currentUser() ?? [];
+$userName = $user['nama'] ?? 'Admin';
 ?>
-<div class="page-header" data-reveal="up">
-    <h1 class="page-title"><?= e($title) ?></h1>
-    <p class="page-subtitle"><?= e($subtitle) ?></p>
+
+<!-- Welcome Banner -->
+<div class="welcome-banner" data-reveal="up">
+    <div class="welcome-banner-content">
+        <div class="welcome-banner-top">
+            <div>
+                <h1>Welcome back, <?= e($userName) ?></h1>
+                <p>Berikut adalah ringkasan data operasional teknisi hari ini.</p>
+            </div>
+            <div class="welcome-banner-actions">
+                <a href="<?= route('/admin/penilaian/create') ?>" class="btn-banner">
+                    <i class="ph ph-pencil-simple text-lg"></i>
+                    Input Penilaian
+                </a>
+            </div>
+        </div>
+
+        <!-- Embedded Stats -->
+        <div class="welcome-stats">
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-users text-lg"></i>
+                    Teknisi Aktif
+                </div>
+                <div class="welcome-stat-value tabular" data-count="<?= e((string) $activeTeknisi) ?>"><?= e((string) $activeTeknisi) ?></div>
+                <div class="welcome-stat-meta">Total teknisi lapangan</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-clipboard-text text-lg"></i>
+                    Penilaian Periode
+                </div>
+                <div class="welcome-stat-value tabular" data-count="<?= e((string) $countByLatest) ?>"><?= e((string) $countByLatest) ?></div>
+                <div class="welcome-stat-meta"><?= $latestPeriode ? e(periodLabel($latestPeriode)) : 'Belum ada periode' ?></div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-sliders-horizontal text-lg"></i>
+                    Total Kriteria
+                </div>
+                <div class="welcome-stat-value tabular" data-count="<?= e((string) $kriteriaCount) ?>"><?= e((string) $kriteriaCount) ?></div>
+                <div class="welcome-stat-meta">C1, C2, C3</div>
+            </div>
+            <div class="welcome-stat">
+                <div class="welcome-stat-label">
+                    <i class="ph ph-chart-pie-slice text-lg"></i>
+                    Total Bobot
+                </div>
+                <div class="welcome-stat-value tabular"><?= e(weightPercent($totalBobot)) ?></div>
+                <div class="welcome-stat-meta"><?= $bobotValid ? 'Distribusi bobot valid' : 'Bobot tidak valid!' ?></div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="kpi-grid" data-reveal-group>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Teknisi Aktif</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="kpi-value tabular" data-count="<?= e((string) $activeTeknisi) ?>"><?= e((string) $activeTeknisi) ?></div>
-        <div class="kpi-meta">Total teknisi lapangan</div>
-    </div>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Penilaian Periode Ini</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
-        </div>
-        <div class="kpi-value tabular" data-count="<?= e((string) $countByLatest) ?>"><?= e((string) $countByLatest) ?></div>
-        <div class="kpi-meta"><?= $latestPeriode ? e(periodLabel($latestPeriode)) : 'Belum ada periode' ?></div>
-    </div>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Kriteria</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4h-7"/><path d="M17 20V4"/><path d="M3 14h7"/><path d="M7 20v-6"/><path d="M14 15h7"/><path d="M17 10V4"/></svg>
-        </div>
-        <div class="kpi-value tabular" data-count="<?= e((string) $kriteriaCount) ?>"><?= e((string) $kriteriaCount) ?></div>
-        <div class="kpi-meta">C1, C2, C3</div>
-    </div>
-    <div class="kpi-card" data-reveal="up">
-        <div class="kpi-header">
-            <span>Total Bobot</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.5a4.5 4.5 0 1 1 4.5 4.5M12 7.5A4.5 4.5 0 1 0 7.5 12M12 7.5V9m-4.5 3a4.5 4.5 0 1 0 4.5 4.5M7.5 12H9"/><circle cx="12" cy="12" r="10"/></svg>
-        </div>
-        <div class="kpi-value tabular <?= $bobotValid ? 'text-success' : 'text-danger' ?>"><?= e(weightPercent($totalBobot)) ?></div>
-        <div class="kpi-meta"><?= $bobotValid ? 'Bobot valid' : 'Bobot tidak valid' ?></div>
-    </div>
-</div>
-
+<!-- Main Content Grid: Table (2/3) + Sidebar (1/3) -->
 <div class="grid-2-1" data-reveal="up">
+
+    <!-- Recent Evaluations Table -->
     <div class="card">
-        <h2 class="card-title">Penilaian Terbaru</h2>
-        <p class="card-subtitle">Data input penilaian kinerja teknisi terakhir.</p>
+        <div class="section-header">
+            <div class="section-header-left">
+                <h3>Penilaian Terbaru</h3>
+                <p>Data input penilaian kinerja teknisi terakhir.</p>
+            </div>
+            <a href="<?= route('/admin/penilaian') ?>" class="btn-link">Lihat Semua</a>
+        </div>
+
         <?php if (empty($recent)): ?>
             <div class="empty-state">
                 <div class="empty-state-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                    <i class="ph ph-clipboard-text text-3xl"></i>
                 </div>
                 <div class="empty-state-title">Belum Ada Data Penilaian</div>
                 <p>Mulai dengan input penilaian teknisi.</p>
@@ -79,8 +105,13 @@
                         <?php foreach ($recent as $r): ?>
                             <tr>
                                 <td>
-                                    <strong><?= e($r['kode_teknisi']) ?></strong>
-                                    <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
+                                    <div class="flex items-center gap-3">
+                                        <div class="tech-avatar tech-avatar-blue"><?= e(strtoupper(mb_substr($r['nama_teknisi'], 0, 2))) ?></div>
+                                        <div>
+                                            <strong><?= e($r['nama_teknisi']) ?></strong>
+                                            <div class="meta-text"><?= e($r['kode_teknisi']) ?></div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td><?= e(periodLabel($r['periode'])) ?></td>
                                 <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
@@ -94,35 +125,64 @@
         <?php endif; ?>
     </div>
 
-    <div class="card">
-        <h2 class="card-title">Ringkasan Kriteria</h2>
-        <p class="card-subtitle">Bobot dan atribut penilaian SAW.</p>
-        <div class="stack mt-4">
-            <?php foreach ($kriteria as $k): ?>
-                <div class="summary-row">
-                    <div>
-                        <div class="font-semibold"><?= e($k['kode']) ?> &middot; <?= e($k['nama_kriteria']) ?></div>
-                        <div class="meta-text"><?= e(ucfirst($k['atribut'])) ?></div>
-                    </div>
-                    <div class="font-bold text-gold"><?= e(weightPercent((float) $k['bobot'])) ?></div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <?php if (!$bobotValid): ?>
-            <div class="badge badge-danger mt-4">
-                Total bobot harus 100%
-            </div>
-        <?php endif; ?>
-    </div>
-</div>
+    <!-- Right Sidebar: Criteria + Quick Actions -->
+    <div class="stack" style="gap: var(--space-6);">
 
-<div class="row" data-reveal="up">
-    <a href="<?= route('/admin/teknisi/create') ?>" class="btn btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-        Tambah Teknisi
-    </a>
-    <a href="<?= route('/admin/penilaian/create') ?>" class="btn btn-secondary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
-        Input Penilaian
-    </a>
+        <!-- Criteria Summary -->
+        <div class="card">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <h3>Ringkasan Kriteria</h3>
+                    <p>Bobot dan atribut penilaian SAW.</p>
+                </div>
+            </div>
+
+            <div class="stack">
+                <?php
+                $criteriaIcons = [
+                    0 => ['class' => 'criteria-icon-blue', 'svg' => '<i class="ph ph-target text-xl"></i>'],
+                    1 => ['class' => 'criteria-icon-green', 'svg' => '<i class="ph ph-star text-xl"></i>'],
+                    2 => ['class' => 'criteria-icon-purple', 'svg' => '<i class="ph ph-chart-bar text-xl"></i>'],
+                ];
+                foreach ($kriteria as $idx => $k):
+                    $iconData = $criteriaIcons[$idx] ?? $criteriaIcons[0];
+                ?>
+                    <div class="criteria-item">
+                        <div class="criteria-item-left">
+                            <div class="criteria-icon <?= $iconData['class'] ?>">
+                                <?= $iconData['svg'] ?>
+                            </div>
+                            <div>
+                                <div class="criteria-item-name"><?= e($k['kode']) ?> · <?= e($k['nama_kriteria']) ?></div>
+                                <span class="badge badge-brand criteria-item-type"><?= e(ucfirst($k['atribut'])) ?></span>
+                            </div>
+                        </div>
+                        <div class="criteria-weight"><?= e(weightPercent((float) $k['bobot'])) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <?php if (!$bobotValid): ?>
+                <div class="badge badge-danger mt-4">
+                    Total bobot harus 100%
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-action-grid">
+            <a href="<?= route('/admin/teknisi/create') ?>" class="quick-action">
+                <div class="quick-action-icon">
+                    <i class="ph ph-user-plus text-2xl"></i>
+                </div>
+                <span class="quick-action-label">Tambah Teknisi</span>
+            </a>
+            <a href="<?= route('/admin/penilaian/create') ?>" class="quick-action">
+                <div class="quick-action-icon">
+                    <i class="ph ph-pencil-simple text-2xl"></i>
+                </div>
+                <span class="quick-action-label">Input Penilaian</span>
+            </a>
+        </div>
+    </div>
 </div>

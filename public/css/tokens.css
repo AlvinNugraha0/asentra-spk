@@ -1,34 +1,44 @@
-/* ASENTRA SPK Design Tokens */
+/* ASENTRA SPK Design Tokens — Light Professional Theme */
 
 :root {
-    /* Backgrounds */
-    --bg-page: #242424;
-    --bg-app: #05030B;
-    --bg-surface: #18161B;
-    --bg-elevated: #211F23;
-    --bg-hover: #28252B;
+    /* Backgrounds — Light theme */
+    --bg-page: #f4f6fa;
+    --bg-app: #ffffff;
+    --bg-surface: #ffffff;
+    --bg-elevated: #f9fafb;
+    --bg-hover: #f3f4f6;
 
     /* Borders */
-    --border: #302D34;
-    --border-subtle: rgba(48, 45, 52, 0.6);
+    --border: #e5e7eb;
+    --border-subtle: #f3f4f6;
 
     /* Text */
-    --text-primary: #F5F4F7;
-    --text-secondary: #A5A1AA;
-    --text-muted: #77727D;
-    --text-disabled: #5B5860;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --text-disabled: #d1d5db;
 
-    /* ASENTRA Gold */
-    --gold: #D6B24C;
-    --gold-light: #E7CC76;
-    --gold-dark: #9F7D1F;
-    --gold-soft: rgba(214, 178, 76, 0.12);
+    /* Brand Blue */
+    --brand: #1665d8;
+    --brand-light: #e0ecfb;
+    --brand-dark: #1052b5;
+    --brand-soft: rgba(22, 101, 216, 0.08);
+
+    /* ASENTRA Gold — kept for ranking emphasis */
+    --gold: #f59e0b;
+    --gold-light: #fbbf24;
+    --gold-dark: #d97706;
+    --gold-soft: rgba(245, 158, 11, 0.10);
 
     /* Semantic */
-    --success: #43D17A;
-    --warning: #F0B84B;
-    --danger: #F06464;
-    --info: #6D8CFF;
+    --success: #10b981;
+    --success-soft: rgba(16, 185, 129, 0.08);
+    --warning: #f59e0b;
+    --warning-soft: rgba(245, 158, 11, 0.08);
+    --danger: #ef4444;
+    --danger-soft: rgba(239, 68, 68, 0.08);
+    --info: #6366f1;
+    --info-soft: rgba(99, 102, 241, 0.08);
 
     /* Spacing */
     --space-1: 4px;
@@ -60,7 +70,7 @@
     --text-md: 16px;
     --text-lg: 18px;
     --text-xl: 22px;
-    --text-2xl: 32px;
+    --text-2xl: 28px;
     --text-3xl: 36px;
 
     /* Font weights */
@@ -70,14 +80,16 @@
     --font-bold: 700;
 
     /* Layout */
-    --sidebar-width: 80px;
-    --topbar-height: 68px;
-    --app-max-width: 1480px;
+    --sidebar-width: 256px;
+    --topbar-height: 72px;
+    --app-max-width: 1600px;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.45);
+    /* Shadows — subtle for light theme */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 
     /* Motion (MOTION.md §4, §31) */
     --motion-fast: 150ms;

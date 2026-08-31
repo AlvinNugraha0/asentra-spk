@@ -10,6 +10,7 @@ $user = currentUser() ?? [];
 $role = $user['role'] ?? '';
 $nameInitials = strtoupper(mb_substr(($user['nama'] ?? 'U'), 0, 2));
 $pageTitle = ($title ?? 'ASENTRA SPK');
+$roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Panel' : 'Panel');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -19,20 +20,27 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
     <title><?= e($pageTitle) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="<?= asset('css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/base.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/components.css') ?>">
 </head>
 <body>
-    <div class="ambient" aria-hidden="true"></div>
     <a href="#main-content" class="skip-link">Langsung ke konten</a>
 
     <div class="app-shell">
         <div class="sidebar-backdrop" data-sidebar-close></div>
 
         <aside class="sidebar" id="app-sidebar">
-            <div class="logo">AS</div>
+            <!-- Brand -->
+            <div class="sidebar-brand">
+                <div class="logo">AS</div>
+                <div class="sidebar-brand-text">
+                    <div class="sidebar-brand-name">ASENTRA</div>
+                    <div class="sidebar-brand-label"><?= e($roleName) ?></div>
+                </div>
+            </div>
 
             <?php if ($role === 'admin'): ?>
                 <ul class="nav-list">
@@ -87,35 +95,53 @@ $pageTitle = ($title ?? 'ASENTRA SPK');
                 </ul>
             <?php endif; ?>
 
-            <ul class="nav-list mt-auto">
-                <li class="nav-item">
-                    <form action="<?= route('/logout') ?>" method="POST" class="form-reset w-full">
-                        <?= csrfField() ?>
-                        <button type="submit" class="nav-link" aria-label="Logout">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                        </button>
-                    </form>
-                    <span class="nav-tooltip">Logout</span>
-                </li>
-            </ul>
+            <!-- Logout + User at bottom -->
+            <div class="sidebar-user">
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-avatar"><?= e($nameInitials) ?></div>
+                    <div class="flex-1" style="min-width:0;">
+                        <div class="sidebar-user-name"><?= e($user['nama'] ?? 'Pengguna') ?></div>
+                        <div class="sidebar-user-role"><?= e(ucfirst($role)) ?></div>
+                    </div>
+                </div>
+                <form action="<?= route('/logout') ?>" method="POST" class="form-reset w-full" style="margin-top: var(--space-3);">
+                    <?= csrfField() ?>
+                    <button type="submit" class="nav-link" style="justify-content: flex-start;">
+                        <i class="ph ph-sign-out text-xl"></i>
+                        <span class="nav-label">Logout</span>
+                    </button>
+                </form>
+            </div>
         </aside>
 
         <div class="main-area">
             <header class="topbar">
-                <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-label="Buka menu navigasi" aria-controls="app-sidebar" aria-expanded="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                </button>
-                <div class="search-bar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input type="text" placeholder="Cari..." aria-label="Pencarian">
+                <div class="flex items-center gap-4">
+                    <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-label="Buka menu navigasi" aria-controls="app-sidebar" aria-expanded="false">
+                        <i class="ph ph-list text-xl"></i>
+                    </button>
+                    <div class="topbar-left">
+                        <h2 class="topbar-title"><?= e($title ?? 'Dashboard') ?></h2>
+                        <?php if (!empty($subtitle)): ?>
+                            <p class="topbar-subtitle"><?= e($subtitle) ?></p>
+                        <?php endif; ?>
+                    </div>
                 </div>
+
                 <div class="topbar-right">
+                    <div class="search-bar">
+                        <i class="ph ph-magnifying-glass text-lg"></i>
+                        <input type="text" placeholder="Cari..." aria-label="Pencarian">
+                    </div>
+
                     <button type="button" class="icon-btn" aria-label="Notifikasi">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                        <i class="ph ph-bell text-xl"></i>
                     </button>
+                    
                     <button type="button" class="icon-btn" aria-label="Pengaturan">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <i class="ph ph-gear text-xl"></i>
                     </button>
+
                     <div class="user-avatar" title="<?= e($user['nama'] ?? 'Pengguna') ?>"><?= e($nameInitials) ?></div>
                 </div>
             </header>
