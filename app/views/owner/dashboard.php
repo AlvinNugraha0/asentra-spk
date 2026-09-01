@@ -80,58 +80,50 @@ $userName = $user['nama'] ?? 'Owner';
     </div>
 <?php else: ?>
 
-    <?php
-    $trendSummary = $trendSummary ?? ['trendData' => [], 'latestAvg' => null, 'deltaLabel' => '', 'deltaType' => 'neutral'];
-    $hasTrendData = count($trendSummary['trendData']) > 0;
-    $hasSufficientTrendData = count($trendSummary['trendData']) > 1;
-    $trendLabels = [];
-    $trendValues = [];
-    foreach ($trendSummary['trendData'] as $td) {
-        $trendLabels[] = periodLabel($td['periode']);
-        $trendValues[] = round((float)$td['avg_score'], 3);
+<?php
+$hasResults = !empty($results);
+$perfLabels = [];
+$perfValues = [];
+$perfRanks = [];
+if ($hasResults) {
+    foreach ($results as $r) {
+        $perfLabels[] = $r['nama_teknisi'];
+        $perfValues[] = round((float)$r['nilai_preferensi'], 3);
+        $perfRanks[] = (int) ($r['ranking'] ?? 0); // ponytail: correct key is ranking
     }
-    ?>
+}
+?>
 
     <div class="stack" style="gap: var(--space-6);">
-        <!-- Trend Chart -->
+        <!-- Performance Bar Chart -->
         <div class="card" data-reveal="up">
             <div class="section-header" style="align-items: flex-start;">
                 <div class="section-header-left">
-                    <h3>Tren Kinerja</h3>
-                    <p>Rata-rata skor akhir SAW berdasarkan periode penilaian.</p>
+                    <h3>Grafik Performa Skor SAW</h3>
+                    <p>Distribusi nilai preferensi (Vi) seluruh teknisi periode <?= e(periodLabel($processedPeriode)) ?>.</p>
                 </div>
-                <?php if ($hasTrendData): ?>
+                <?php if ($hasResults && $topResult): ?>
                 <div style="text-align: right;">
                     <div class="tabular font-bold" style="font-size: 1.5rem; color: var(--brand); line-height: 1;">
-                        <?= e(number_format($trendSummary['latestAvg'], 3)) ?>
+                        <?= e(scoreFormat((float)$topResult['nilai_preferensi'], 3)) ?>
                     </div>
-                    <?php if ($hasSufficientTrendData): ?>
-                    <div style="font-size: var(--text-sm); margin-top: 4px; color: <?= $trendSummary['deltaType'] === 'positive' ? 'var(--success)' : ($trendSummary['deltaType'] === 'negative' ? 'var(--danger)' : 'var(--text-light)') ?>;">
-                        <?= e($trendSummary['deltaLabel']) ?>
+                    <div style="font-size: var(--text-sm); margin-top: 4px; color: var(--text-muted);">
+                        Peringkat #1: <?= e($topResult['nama_teknisi']) ?>
                     </div>
-                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
             </div>
             
-            <div style="position: relative; height: 250px; width: 100%;">
-                <?php if (!$hasTrendData): ?>
-                    <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-light); border-radius: var(--radius-md); background: var(--bg-body);">
-                        <div style="text-align: center; color: var(--text-light);">
-                            <i class="ph ph-chart-line" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
-                            <div>Belum ada data historis evaluasi.</div>
-                        </div>
-                    </div>
-                <?php elseif (!$hasSufficientTrendData): ?>
-                    <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-light); border-radius: var(--radius-md); background: var(--bg-body);">
-                        <div style="text-align: center; color: var(--text-light);">
-                            <i class="ph ph-chart-line" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
-                            <div>Tren kinerja membutuhkan lebih dari satu periode evaluasi.</div>
-                            <div style="font-size: var(--text-sm); margin-top: 4px;">Periode saat ini: <?= e($trendLabels[0]) ?> (<?= e(number_format($trendValues[0], 3)) ?>)</div>
+            <div style="position: relative; height: <?= max(260, count($results) * 30 + 40) ?>px; width: 100%;">
+                <?php if (!$hasResults): ?>
+                    <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); border-radius: var(--radius-md); background: var(--bg-surface);">
+                        <div style="text-align: center; color: var(--text-muted);">
+                            <i class="ph ph-chart-bar-horizontal" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
+                            <div>Belum ada data evaluasi untuk ditampilkan.</div>
                         </div>
                     </div>
                 <?php else: ?>
-                    <canvas id="trendChart"></canvas>
+                    <canvas id="performanceChart"></canvas>
                 <?php endif; ?>
             </div>
         </div>
@@ -165,7 +157,7 @@ $userName = $user['nama'] ?? 'Owner';
                     <tbody>
                         <?php foreach (array_slice($results, 0, 5) as $r): ?>
                             <tr>
-                                <td><?= e(rankBadge((int) $r['ranking'])) ?></td>
+                                <td><?= rankBadge((int) $r['ranking']) ?></td>
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <div class="tech-avatar tech-avatar-blue">
@@ -248,45 +240,84 @@ $userName = $user['nama'] ?? 'Owner';
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('trendChart');
+    var ctx = document.getElementById('performanceChart');
     if (!ctx) return;
 
     var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var perfRanks = <?= json_encode($perfRanks) ?>;
+    var perfValues = <?= json_encode($perfValues) ?>;
 
-    new Chart(ctx, {
-        type: 'line',
+    function getPerfColors(isDark) {
+        var bgColors = [];
+        var hoverColors = [];
+        var borderColors = [];
+
+        for (var i = 0; i < perfValues.length; i++) {
+            if (i === 0) {
+                // Rank 1: Gold highlight
+                bgColors.push(isDark ? 'rgba(214, 178, 76, 0.9)' : 'rgba(214, 178, 76, 0.9)');
+                hoverColors.push('#E6C968');
+                borderColors.push('#D6B24C');
+            } else if (i < 3) {
+                // Rank 2-3: Secondary Accent
+                bgColors.push(isDark ? 'rgba(214, 178, 76, 0.45)' : 'rgba(22, 101, 216, 0.75)');
+                hoverColors.push(isDark ? 'rgba(214, 178, 76, 0.65)' : '#0052cc');
+                borderColors.push(isDark ? '#D6B24C' : '#1665d8');
+            } else {
+                // Other ranks
+                bgColors.push(isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(22, 101, 216, 0.35)');
+                hoverColors.push(isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(22, 101, 216, 0.55)');
+                borderColors.push(isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(22, 101, 216, 0.5)');
+            }
+        }
+
+        return {
+            bgColors: bgColors,
+            hoverColors: hoverColors,
+            borderColors: borderColors,
+            gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)',
+            tickColor: isDark ? '#A7A7A3' : '#6b7280',
+            tooltipBg: isDark ? '#1C1C1F' : '#1f2937',
+            tooltipTitleColor: isDark ? '#F5F5F3' : '#ffffff',
+            tooltipBodyColor: isDark ? '#D6B24C' : '#ffffff',
+            tooltipBorderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+        };
+    }
+
+    var isDarkMode = (document.documentElement.getAttribute('data-theme') === 'dark');
+    var themeCfg = getPerfColors(isDarkMode);
+
+    var perfChart = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: <?= json_encode($trendLabels) ?>,
+            labels: <?= json_encode($perfLabels) ?>,
             datasets: [{
-                label: 'Rata-rata Skor SAW',
-                data: <?= json_encode($trendValues) ?>,
-                borderColor: '#1665d8',
-                backgroundColor: 'rgba(22, 101, 216, 0.05)',
-                borderWidth: 2,
-                pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#1665d8',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                fill: true,
-                tension: 0.3
+                label: 'Skor SAW',
+                data: perfValues,
+                backgroundColor: themeCfg.bgColors,
+                hoverBackgroundColor: themeCfg.hoverColors,
+                borderColor: themeCfg.borderColors,
+                borderWidth: 1,
+                borderRadius: 4,
+                maxBarThickness: 20,
             }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             animation: prefersReducedMotion ? false : {
-                duration: 750,
+                duration: 600,
                 easing: 'easeOutQuart'
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false,
             },
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#1f2937',
+                    backgroundColor: themeCfg.tooltipBg,
+                    titleColor: themeCfg.tooltipTitleColor,
+                    bodyColor: themeCfg.tooltipBodyColor,
+                    borderColor: themeCfg.tooltipBorderColor,
+                    borderWidth: 1,
                     padding: 12,
                     cornerRadius: 8,
                     titleFont: { family: "'Inter', sans-serif", size: 13 },
@@ -294,36 +325,58 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayColors: false,
                     callbacks: {
                         label: function(context) {
-                            return 'Skor: ' + context.parsed.y.toFixed(3);
+                            var rank = perfRanks[context.dataIndex] || (context.dataIndex + 1);
+                            return 'Skor SAW: ' + context.parsed.x.toFixed(3) + ' (Peringkat #' + rank + ')';
                         }
                     }
                 }
             },
             scales: {
                 x: {
-                    grid: { display: false, drawBorder: false },
-                    ticks: {
-                        font: { family: "'Inter', sans-serif", size: 12 },
-                        color: '#6b7280'
-                    }
-                },
-                y: {
                     border: { display: false },
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    beginAtZero: false,
+                    grid: { color: themeCfg.gridColor },
+                    beginAtZero: true,
                     suggestedMin: 0,
                     suggestedMax: 1,
                     ticks: {
-                        font: { family: "'Inter', sans-serif", size: 12 },
-                        color: '#6b7280',
-                        padding: 10,
+                        stepSize: 0.2,
+                        font: { family: "'Inter', sans-serif", size: 11 },
+                        color: themeCfg.tickColor,
+                        padding: 6,
                         callback: function(value) {
                             return value.toFixed(2);
                         }
                     }
+                },
+                y: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: {
+                        font: { family: "'Inter', sans-serif", size: 12, weight: '500' },
+                        color: themeCfg.tickColor
+                    }
                 }
             }
         }
+    });
+
+    window.addEventListener('themechange', function(e) {
+        if (!perfChart) return;
+        var isDark = e.detail.theme === 'dark';
+        var newCfg = getPerfColors(isDark);
+
+        perfChart.data.datasets[0].backgroundColor = newCfg.bgColors;
+        perfChart.data.datasets[0].hoverBackgroundColor = newCfg.hoverColors;
+        perfChart.data.datasets[0].borderColor = newCfg.borderColors;
+
+        perfChart.options.scales.x.grid.color = newCfg.gridColor;
+        perfChart.options.scales.x.ticks.color = newCfg.tickColor;
+        perfChart.options.scales.y.ticks.color = newCfg.tickColor;
+        perfChart.options.plugins.tooltip.backgroundColor = newCfg.tooltipBg;
+        perfChart.options.plugins.tooltip.titleColor = newCfg.tooltipTitleColor;
+        perfChart.options.plugins.tooltip.bodyColor = newCfg.tooltipBodyColor;
+        perfChart.options.plugins.tooltip.borderColor = newCfg.tooltipBorderColor;
+
+        perfChart.update();
     });
 });
 </script>

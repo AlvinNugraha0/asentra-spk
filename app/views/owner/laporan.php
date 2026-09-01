@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title) ?></title>
+    <link rel="icon" type="image/png" href="<?= asset('favicon.png') ?>">
     <link rel="stylesheet" href="<?= asset('css/print.css') ?>">
 </head>
 <body>
@@ -20,6 +21,7 @@
 
     <div class="report">
         <header class="report-header">
+            <img src="<?= asset('img/logo-asentra.png') ?>" alt="ASENTRA Logo" class="report-logo">
             <div class="report-brand">CV ARSITEK SEMESTA NUSANTARA</div>
             <div class="report-sub">Arsitektur &amp; Konstruksi — Cirebon</div>
             <h1>LAPORAN PENILAIAN KINERJA TEKNISI</h1>

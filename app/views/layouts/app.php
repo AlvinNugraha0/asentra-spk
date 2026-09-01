@@ -22,6 +22,17 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('asentra_theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="icon" type="image/png" href="<?= asset('favicon.png') ?>">
     <link rel="stylesheet" href="<?= asset('css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/base.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/components.css') ?>">
@@ -35,11 +46,7 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
         <aside class="sidebar" id="app-sidebar">
             <!-- Brand -->
             <div class="sidebar-brand">
-                <div class="logo">AS</div>
-                <div class="sidebar-brand-text">
-                    <div class="sidebar-brand-name">ASENTRA</div>
-                    <div class="sidebar-brand-label"><?= e($roleName) ?></div>
-                </div>
+                <img src="<?= asset('img/logo-asentra.png') ?>" alt="ASENTRA" class="sidebar-brand-full-logo">
             </div>
 
             <?php if ($role === 'admin'): ?>
@@ -133,6 +140,11 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
                         <i class="ph ph-magnifying-glass text-lg"></i>
                         <input type="text" placeholder="Cari..." aria-label="Pencarian">
                     </div>
+
+                    <button type="button" class="icon-btn theme-toggle-btn" data-theme-toggle aria-label="Ganti mode tema (Terang / Gelap)" aria-pressed="false" title="Ganti Mode Tema">
+                        <i class="ph ph-sun theme-icon-light text-xl" aria-hidden="true"></i>
+                        <i class="ph ph-moon theme-icon-dark text-xl" aria-hidden="true"></i>
+                    </button>
 
                     <button type="button" class="icon-btn" aria-label="Notifikasi">
                         <i class="ph ph-bell text-xl"></i>

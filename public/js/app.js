@@ -305,6 +305,42 @@
         }
     }, true);
 
+    // Theme manager & persistence
+    function initTheme() {
+        function updateToggleButtons(theme) {
+            const isDark = theme === 'dark';
+            document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+                btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+                btn.setAttribute('title', isDark ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap');
+            });
+        }
+
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        updateToggleButtons(currentTheme);
+
+        document.addEventListener('click', function (e) {
+            const toggle = e.target.closest('[data-theme-toggle]');
+            if (!toggle) return;
+
+            const active = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = active === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+                localStorage.setItem('asentra_theme', next);
+            } catch (err) {}
+
+            updateToggleButtons(next);
+            window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTheme);
+    } else {
+        initTheme();
+    }
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;

@@ -27,6 +27,7 @@ class AdminDashboardController
         $bobotValid = abs($totalBobot - 1.0) < 0.0001;
 
         $trendSummary = Hasil::getTrendSummary();
+        $criteriaAvg = Penilaian::getCriteriaAverages($latestPeriode);
 
         renderWithLayout('admin/dashboard', [
             'title' => 'Dashboard Admin',
@@ -41,6 +42,7 @@ class AdminDashboardController
             'kriteria' => $kriteria,
             'recent' => $recent,
             'trendSummary' => $trendSummary,
+            'criteriaAvg' => $criteriaAvg,
         ]);
     }
 }

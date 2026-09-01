@@ -28,7 +28,7 @@ class Teknisi
             $params[] = $status;
         }
 
-        $sql .= ' ORDER BY kode_teknisi ASC';
+        $sql .= ' ORDER BY LENGTH(kode_teknisi) ASC, kode_teknisi ASC';
 
         return Database::query($sql, $params)->fetchAll();
     }

@@ -30,7 +30,7 @@ class Penilaian
             $params[] = $like;
         }
 
-        $sql .= ' ORDER BY p.periode DESC, t.kode_teknisi ASC';
+        $sql .= ' ORDER BY p.periode DESC, LENGTH(t.kode_teknisi) ASC, t.kode_teknisi ASC';
 
         return Database::query($sql, $params)->fetchAll();
     }
@@ -118,5 +118,25 @@ class Penilaian
                 ORDER BY p.created_at DESC
                 LIMIT ?';
         return Database::query($sql, [$limit])->fetchAll();
+    }
+
+    // ponytail: single clean query for criteria averages
+    public static function getCriteriaAverages(?string $periode = null): array
+    {
+        $periode = $periode ?? self::latestPeriode();
+        if (!$periode) {
+            return ['c1' => 0.0, 'c2' => 0.0, 'c3' => 0.0, 'count' => 0, 'periode' => null];
+        }
+        $row = Database::query(
+            'SELECT AVG(c1) AS avg_c1, AVG(c2) AS avg_c2, AVG(c3) AS avg_c3, COUNT(*) AS c FROM tb_penilaian WHERE periode = ?',
+            [$periode]
+        )->fetch();
+        return [
+            'c1' => round((float) ($row['avg_c1'] ?? 0), 2),
+            'c2' => round((float) ($row['avg_c2'] ?? 0), 2),
+            'c3' => round((float) ($row['avg_c3'] ?? 0), 2),
+            'count' => (int) ($row['c'] ?? 0),
+            'periode' => $periode,
+        ];
     }
 }

@@ -83,6 +83,14 @@ body {
     padding-bottom: 20px;
 }
 
+.report-logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
 .report-brand {
     font-size: 20px;
     font-weight: bold;

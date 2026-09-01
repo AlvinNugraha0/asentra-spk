@@ -69,57 +69,41 @@ $userName = $user['nama'] ?? 'Admin';
 </div>
 
 <?php
-$trendSummary = $trendSummary ?? ['trendData' => [], 'latestAvg' => null, 'deltaLabel' => '', 'deltaType' => 'neutral'];
-$hasTrendData = count($trendSummary['trendData']) > 0;
-$hasSufficientTrendData = count($trendSummary['trendData']) > 1;
-$trendLabels = [];
-$trendValues = [];
-foreach ($trendSummary['trendData'] as $td) {
-    $trendLabels[] = periodLabel($td['periode']);
-    $trendValues[] = round((float)$td['avg_score'], 3);
-}
+$criteriaAvg = $criteriaAvg ?? ['c1' => 0, 'c2' => 0, 'c3' => 0, 'count' => 0, 'periode' => $latestPeriode];
+$hasCriteriaData = ($criteriaAvg['count'] ?? 0) > 0;
+$overallAvg = $hasCriteriaData ? round(($criteriaAvg['c1'] + $criteriaAvg['c2'] + $criteriaAvg['c3']) / 3, 2) : 0;
 ?>
 
 <div class="stack" style="gap: var(--space-6);">
-    <!-- Trend Chart -->
+    <!-- Criteria Average Bar Chart -->
     <div class="card" data-reveal="up">
         <div class="section-header" style="align-items: flex-start;">
             <div class="section-header-left">
-                <h3>Tren Kinerja</h3>
-                <p>Rata-rata skor akhir SAW berdasarkan periode penilaian.</p>
+                <h3>Rata-rata Capaian Kriteria</h3>
+                <p>Perbandingan nilai rata-rata kriteria periode <?= e($criteriaAvg['periode'] ? periodLabel($criteriaAvg['periode']) : 'saat ini') ?> (Skala 1 - 4).</p>
             </div>
-            <?php if ($hasTrendData): ?>
+            <?php if ($hasCriteriaData): ?>
             <div style="text-align: right;">
                 <div class="tabular font-bold" style="font-size: 1.5rem; color: var(--brand); line-height: 1;">
-                    <?= e(number_format($trendSummary['latestAvg'], 3)) ?>
+                    <?= e(number_format($overallAvg, 2)) ?> <span style="font-size: var(--text-sm); font-weight: normal; color: var(--text-muted);">/ 4.00</span>
                 </div>
-                <?php if ($hasSufficientTrendData): ?>
-                <div style="font-size: var(--text-sm); margin-top: 4px; color: <?= $trendSummary['deltaType'] === 'positive' ? 'var(--success)' : ($trendSummary['deltaType'] === 'negative' ? 'var(--danger)' : 'var(--text-light)') ?>;">
-                    <?= e($trendSummary['deltaLabel']) ?>
+                <div style="font-size: var(--text-sm); margin-top: 4px; color: var(--text-muted);">
+                    <?= e((string) $criteriaAvg['count']) ?> Teknisi Dinilai
                 </div>
-                <?php endif; ?>
             </div>
             <?php endif; ?>
         </div>
         
-        <div style="position: relative; height: 250px; width: 100%;">
-            <?php if (!$hasTrendData): ?>
-                <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-light); border-radius: var(--radius-md); background: var(--bg-body);">
-                    <div style="text-align: center; color: var(--text-light);">
-                        <i class="ph ph-chart-line" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
-                        <div>Belum ada data historis evaluasi.</div>
-                    </div>
-                </div>
-            <?php elseif (!$hasSufficientTrendData): ?>
-                <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-light); border-radius: var(--radius-md); background: var(--bg-body);">
-                    <div style="text-align: center; color: var(--text-light);">
-                        <i class="ph ph-chart-line" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
-                        <div>Tren kinerja membutuhkan lebih dari satu periode evaluasi.</div>
-                        <div style="font-size: var(--text-sm); margin-top: 4px;">Periode saat ini: <?= e($trendLabels[0]) ?> (<?= e(number_format($trendValues[0], 3)) ?>)</div>
+        <div style="position: relative; height: 260px; width: 100%;">
+            <?php if (!$hasCriteriaData): ?>
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); border-radius: var(--radius-md); background: var(--bg-surface);">
+                    <div style="text-align: center; color: var(--text-muted);">
+                        <i class="ph ph-chart-bar" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <div>Belum ada data penilaian pada periode ini.</div>
                     </div>
                 </div>
             <?php else: ?>
-                <canvas id="trendChart"></canvas>
+                <canvas id="criteriaChart"></canvas>
             <?php endif; ?>
         </div>
     </div>
@@ -247,45 +231,58 @@ foreach ($trendSummary['trendData'] as $td) {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('trendChart');
+    var ctx = document.getElementById('criteriaChart');
     if (!ctx) return;
 
     var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    new Chart(ctx, {
-        type: 'line',
+    function getCriteriaChartThemeConfig(isDark) {
+        return {
+            barBg: isDark ? 'rgba(214, 178, 76, 0.85)' : 'rgba(22, 101, 216, 0.85)',
+            barHoverBg: isDark ? '#E6C968' : '#0052cc',
+            barBorder: isDark ? '#D6B24C' : '#1665d8',
+            gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)',
+            tickColor: isDark ? '#A7A7A3' : '#6b7280',
+            tooltipBg: isDark ? '#1C1C1F' : '#1f2937',
+            tooltipTitleColor: isDark ? '#F5F5F3' : '#ffffff',
+            tooltipBodyColor: isDark ? '#D6B24C' : '#ffffff',
+            tooltipBorderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+        };
+    }
+
+    var isDarkMode = (document.documentElement.getAttribute('data-theme') === 'dark');
+    var themeCfg = getCriteriaChartThemeConfig(isDarkMode);
+
+    var criteriaChart = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: <?= json_encode($trendLabels) ?>,
+            labels: ['C1: Kedisiplinan', 'C2: Kualitas Kerja', 'C3: Tanggung Jawab'],
             datasets: [{
-                label: 'Rata-rata Skor SAW',
-                data: <?= json_encode($trendValues) ?>,
-                borderColor: '#1665d8',
-                backgroundColor: 'rgba(22, 101, 216, 0.05)',
-                borderWidth: 2,
-                pointBackgroundColor: '#ffffff',
-                pointBorderColor: '#1665d8',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                fill: true,
-                tension: 0.3
+                label: 'Nilai Rata-rata',
+                data: [<?= $criteriaAvg['c1'] ?>, <?= $criteriaAvg['c2'] ?>, <?= $criteriaAvg['c3'] ?>],
+                backgroundColor: themeCfg.barBg,
+                hoverBackgroundColor: themeCfg.barHoverBg,
+                borderColor: themeCfg.barBorder,
+                borderWidth: 1,
+                borderRadius: 6,
+                maxBarThickness: 48,
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             animation: prefersReducedMotion ? false : {
-                duration: 750,
+                duration: 600,
                 easing: 'easeOutQuart'
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false,
             },
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#1f2937',
+                    backgroundColor: themeCfg.tooltipBg,
+                    titleColor: themeCfg.tooltipTitleColor,
+                    bodyColor: themeCfg.tooltipBodyColor,
+                    borderColor: themeCfg.tooltipBorderColor,
+                    borderWidth: 1,
                     padding: 12,
                     cornerRadius: 8,
                     titleFont: { family: "'Inter', sans-serif", size: 13 },
@@ -293,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayColors: false,
                     callbacks: {
                         label: function(context) {
-                            return 'Skor: ' + context.parsed.y.toFixed(3);
+                            return 'Rata-rata: ' + context.parsed.y.toFixed(2) + ' / 4.00';
                         }
                     }
                 }
@@ -302,27 +299,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 x: {
                     grid: { display: false, drawBorder: false },
                     ticks: {
-                        font: { family: "'Inter', sans-serif", size: 12 },
-                        color: '#6b7280'
+                        font: { family: "'Inter', sans-serif", size: 12, weight: '500' },
+                        color: themeCfg.tickColor
                     }
                 },
                 y: {
                     border: { display: false },
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    beginAtZero: false,
+                    grid: { color: themeCfg.gridColor },
+                    beginAtZero: true,
                     suggestedMin: 0,
-                    suggestedMax: 1,
+                    suggestedMax: 4,
                     ticks: {
+                        stepSize: 1,
                         font: { family: "'Inter', sans-serif", size: 12 },
-                        color: '#6b7280',
-                        padding: 10,
+                        color: themeCfg.tickColor,
+                        padding: 8,
                         callback: function(value) {
-                            return value.toFixed(2);
+                            return value.toFixed(1);
                         }
                     }
                 }
             }
         }
+    });
+
+    window.addEventListener('themechange', function(e) {
+        if (!criteriaChart) return;
+        var isDark = e.detail.theme === 'dark';
+        var newCfg = getCriteriaChartThemeConfig(isDark);
+
+        criteriaChart.data.datasets[0].backgroundColor = newCfg.barBg;
+        criteriaChart.data.datasets[0].hoverBackgroundColor = newCfg.barHoverBg;
+        criteriaChart.data.datasets[0].borderColor = newCfg.barBorder;
+
+        criteriaChart.options.scales.y.grid.color = newCfg.gridColor;
+        criteriaChart.options.scales.x.ticks.color = newCfg.tickColor;
+        criteriaChart.options.scales.y.ticks.color = newCfg.tickColor;
+        criteriaChart.options.plugins.tooltip.backgroundColor = newCfg.tooltipBg;
+        criteriaChart.options.plugins.tooltip.titleColor = newCfg.tooltipTitleColor;
+        criteriaChart.options.plugins.tooltip.bodyColor = newCfg.tooltipBodyColor;
+        criteriaChart.options.plugins.tooltip.borderColor = newCfg.tooltipBorderColor;
+
+        criteriaChart.update();
     });
 });
 </script>
