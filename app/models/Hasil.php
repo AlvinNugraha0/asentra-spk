@@ -106,4 +106,49 @@ class Hasil
         $rows = self::byPeriode($periode);
         return $rows[0] ?? null;
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getTrendSummary(): array
+    {
+        $sql = 'SELECT periode, AVG(nilai_preferensi) as avg_score
+                FROM tb_hasil
+                GROUP BY periode
+                ORDER BY periode ASC';
+        
+        $trendData = Database::query($sql)->fetchAll();
+        
+        $latestAvg = null;
+        $deltaLabel = '';
+        $deltaType = 'neutral';
+        
+        if (count($trendData) > 0) {
+            $latestAvg = round((float)$trendData[count($trendData) - 1]['avg_score'], 3);
+            if (count($trendData) > 1) {
+                $prevAvg = round((float)$trendData[count($trendData) - 2]['avg_score'], 3);
+                $delta = $latestAvg - $prevAvg;
+                
+                if ($delta > 0) {
+                    $deltaPercent = round(($delta / $prevAvg) * 100, 1);
+                    $deltaLabel = "▲ {$deltaPercent}% dari periode sebelumnya";
+                    $deltaType = 'positive';
+                } elseif ($delta < 0) {
+                    $deltaPercent = round((abs($delta) / $prevAvg) * 100, 1);
+                    $deltaLabel = "▼ {$deltaPercent}% dari periode sebelumnya";
+                    $deltaType = 'negative';
+                } else {
+                    $deltaLabel = "Tidak ada perubahan";
+                    $deltaType = 'neutral';
+                }
+            }
+        }
+        
+        return [
+            'trendData' => $trendData,
+            'latestAvg' => $latestAvg,
+            'deltaLabel' => $deltaLabel,
+            'deltaType' => $deltaType
+        ];
+    }
 }

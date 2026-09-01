@@ -68,8 +68,64 @@ $userName = $user['nama'] ?? 'Admin';
     </div>
 </div>
 
-<!-- Main Content Grid: Table (2/3) + Sidebar (1/3) -->
-<div class="grid-2-1" data-reveal="up">
+<?php
+$trendSummary = $trendSummary ?? ['trendData' => [], 'latestAvg' => null, 'deltaLabel' => '', 'deltaType' => 'neutral'];
+$hasTrendData = count($trendSummary['trendData']) > 0;
+$hasSufficientTrendData = count($trendSummary['trendData']) > 1;
+$trendLabels = [];
+$trendValues = [];
+foreach ($trendSummary['trendData'] as $td) {
+    $trendLabels[] = periodLabel($td['periode']);
+    $trendValues[] = round((float)$td['avg_score'], 3);
+}
+?>
+
+<div class="stack" style="gap: var(--space-6);">
+    <!-- Trend Chart -->
+    <div class="card" data-reveal="up">
+        <div class="section-header" style="align-items: flex-start;">
+            <div class="section-header-left">
+                <h3>Tren Kinerja</h3>
+                <p>Rata-rata skor akhir SAW berdasarkan periode penilaian.</p>
+            </div>
+            <?php if ($hasTrendData): ?>
+            <div style="text-align: right;">
+                <div class="tabular font-bold" style="font-size: 1.5rem; color: var(--brand); line-height: 1;">
+                    <?= e(number_format($trendSummary['latestAvg'], 3)) ?>
+                </div>
+                <?php if ($hasSufficientTrendData): ?>
+                <div style="font-size: var(--text-sm); margin-top: 4px; color: <?= $trendSummary['deltaType'] === 'positive' ? 'var(--success)' : ($trendSummary['deltaType'] === 'negative' ? 'var(--danger)' : 'var(--text-light)') ?>;">
+                    <?= e($trendSummary['deltaLabel']) ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+        
+        <div style="position: relative; height: 250px; width: 100%;">
+            <?php if (!$hasTrendData): ?>
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-light); border-radius: var(--radius-md); background: var(--bg-body);">
+                    <div style="text-align: center; color: var(--text-light);">
+                        <i class="ph ph-chart-line" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <div>Belum ada data historis evaluasi.</div>
+                    </div>
+                </div>
+            <?php elseif (!$hasSufficientTrendData): ?>
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-light); border-radius: var(--radius-md); background: var(--bg-body);">
+                    <div style="text-align: center; color: var(--text-light);">
+                        <i class="ph ph-chart-line" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <div>Tren kinerja membutuhkan lebih dari satu periode evaluasi.</div>
+                        <div style="font-size: var(--text-sm); margin-top: 4px;">Periode saat ini: <?= e($trendLabels[0]) ?> (<?= e(number_format($trendValues[0], 3)) ?>)</div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <canvas id="trendChart"></canvas>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Main Content Grid: Table (2/3) + Sidebar (1/3) -->
+    <div class="grid-2-1" data-reveal="up">
 
     <!-- Recent Evaluations Table -->
     <div class="card">
@@ -184,5 +240,89 @@ $userName = $user['nama'] ?? 'Admin';
                 <span class="quick-action-label">Input Penilaian</span>
             </a>
         </div>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('trendChart');
+    if (!ctx) return;
+
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: <?= json_encode($trendLabels) ?>,
+            datasets: [{
+                label: 'Rata-rata Skor SAW',
+                data: <?= json_encode($trendValues) ?>,
+                borderColor: '#1665d8',
+                backgroundColor: 'rgba(22, 101, 216, 0.05)',
+                borderWidth: 2,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#1665d8',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: prefersReducedMotion ? false : {
+                duration: 750,
+                easing: 'easeOutQuart'
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1f2937',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { family: "'Inter', sans-serif", size: 13 },
+                    bodyFont: { family: "'Inter', sans-serif", size: 14, weight: 'bold' },
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Skor: ' + context.parsed.y.toFixed(3);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: {
+                        font: { family: "'Inter', sans-serif", size: 12 },
+                        color: '#6b7280'
+                    }
+                },
+                y: {
+                    border: { display: false },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                    beginAtZero: false,
+                    suggestedMin: 0,
+                    suggestedMax: 1,
+                    ticks: {
+                        font: { family: "'Inter', sans-serif", size: 12 },
+                        color: '#6b7280',
+                        padding: 10,
+                        callback: function(value) {
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>

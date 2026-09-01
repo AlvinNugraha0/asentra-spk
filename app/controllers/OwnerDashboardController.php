@@ -28,6 +28,8 @@ class OwnerDashboardController
             $topResult = $results[0] ?? null;
         }
 
+        $trendSummary = Hasil::getTrendSummary();
+
         renderWithLayout('owner/dashboard', [
             'title' => 'Dashboard Owner',
             'subtitle' => 'Ringkasan evaluasi kinerja teknisi.',
@@ -37,6 +39,7 @@ class OwnerDashboardController
             'evaluatedCount' => $evaluatedCount,
             'topResult' => $topResult,
             'results' => $results,
+            'trendSummary' => $trendSummary,
         ]);
     }
 }

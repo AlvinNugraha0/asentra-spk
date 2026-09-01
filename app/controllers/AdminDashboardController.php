@@ -8,6 +8,7 @@ namespace App\Controllers;
 use App\Models\Teknisi;
 use App\Models\Penilaian;
 use App\Models\Kriteria;
+use App\Models\Hasil;
 
 class AdminDashboardController
 {
@@ -25,6 +26,8 @@ class AdminDashboardController
         $totalBobot = array_sum(array_column($kriteria, 'bobot'));
         $bobotValid = abs($totalBobot - 1.0) < 0.0001;
 
+        $trendSummary = Hasil::getTrendSummary();
+
         renderWithLayout('admin/dashboard', [
             'title' => 'Dashboard Admin',
             'subtitle' => 'Kelola data teknisi dan penilaian kinerja.',
@@ -37,6 +40,7 @@ class AdminDashboardController
             'totalBobot' => $totalBobot,
             'kriteria' => $kriteria,
             'recent' => $recent,
+            'trendSummary' => $trendSummary,
         ]);
     }
 }
