@@ -44,13 +44,15 @@
     --sidebar-user-avatar-bg: rgba(255, 255, 255, 0.2);
     --sidebar-user-avatar-text: #ffffff;
 
-    --topbar-bg: rgba(255, 255, 255, 0.75);
-    --welcome-bg: #1665d8;
-    --welcome-border: transparent;
-    --welcome-stat-bg: rgba(255, 255, 255, 0.08);
-    --welcome-stat-border: rgba(255, 255, 255, 0.1);
-    --welcome-text: #ffffff;
-    --welcome-subtext: rgba(200, 220, 255, 0.9);
+    --welcome-bg: #edf4fe;
+    --welcome-border: #dbeafe;
+    --welcome-banner-img: url('../img/banner-light.webp');
+    --welcome-stat-bg: rgba(255, 255, 255, 0.92);
+    --welcome-stat-border: rgba(255, 255, 255, 0.8);
+    --welcome-stat-shadow: 0 4px 16px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --welcome-text: #0f172a;
+    --welcome-subtext: #475569;
+    --welcome-stat-value: #0f172a;
 
     --btn-primary-bg: #1665d8;
     --btn-primary-text: #ffffff;
@@ -185,12 +187,15 @@
     --sidebar-user-avatar-text: #D6B24C;
 
     --topbar-bg: rgba(17, 17, 19, 0.85);
-    --welcome-bg: #161618;
+    --welcome-bg: #111113;
     --welcome-border: rgba(255, 255, 255, 0.08);
-    --welcome-stat-bg: #1C1C1F;
+    --welcome-banner-img: url('../img/banner-dark.webp');
+    --welcome-stat-bg: rgba(22, 22, 24, 0.85);
     --welcome-stat-border: rgba(255, 255, 255, 0.08);
+    --welcome-stat-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     --welcome-text: #F5F5F3;
     --welcome-subtext: #A7A7A3;
+    --welcome-stat-value: #F5F5F3;
 
     --btn-primary-bg: #D6B24C;
     --btn-primary-text: #0B0B0C;

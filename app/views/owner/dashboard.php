@@ -52,7 +52,7 @@ $userName = $user['nama'] ?? 'Owner';
                     <i class="ph ph-trophy text-lg"></i>
                     Peringkat #1
                 </div>
-                <div class="welcome-stat-value" style="font-size: var(--text-lg); color: var(--gold-light);">
+                <div class="welcome-stat-value" style="font-size: var(--text-lg);">
                     <?= $topResult ? e($topResult['nama_teknisi']) : '-' ?></div>
                 <div class="welcome-stat-meta">Teknisi terbaik</div>
             </div>
@@ -61,7 +61,7 @@ $userName = $user['nama'] ?? 'Owner';
                     <i class="ph ph-chart-line-up text-lg"></i>
                     Skor Tertinggi
                 </div>
-                <div class="welcome-stat-value tabular" style="color: var(--gold-light);">
+                <div class="welcome-stat-value tabular" style="color: var(--brand);">
                     <?= $topResult ? e(scoreFormat((float) $topResult['nilai_preferensi'], 3)) : '-' ?></div>
                 <div class="welcome-stat-meta">Nilai SAW</div>
             </div>

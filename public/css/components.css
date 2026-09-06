@@ -77,7 +77,11 @@
 
 /* ─── Welcome Banner ──────────────────────────────── */
 .welcome-banner {
-    background: var(--welcome-bg);
+    background-color: var(--welcome-bg);
+    background-image: var(--welcome-banner-img);
+    background-size: cover;
+    background-position: center right;
+    background-repeat: no-repeat;
     border: 1px solid var(--welcome-border);
     border-radius: var(--radius-xl);
     padding: var(--space-8);
@@ -88,35 +92,18 @@
     transition: background-color var(--motion-normal) var(--ease-out), border-color var(--motion-normal) var(--ease-out);
 }
 
-/* Decorative blurs */
+/* Subtle gradient scrim overlay for text readability */
 .welcome-banner::before {
     content: '';
     position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    filter: blur(40px);
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.5) 45%, rgba(255, 255, 255, 0.1) 100%);
     pointer-events: none;
+    z-index: 0;
 }
 
-.welcome-banner::after {
-    content: '';
-    position: absolute;
-    bottom: -40px;
-    right: 120px;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: rgba(100, 180, 255, 0.15);
-    filter: blur(30px);
-    pointer-events: none;
-}
-
-[data-theme="dark"] .welcome-banner::after {
-    background: rgba(214, 178, 76, 0.08);
+[data-theme="dark"] .welcome-banner::before {
+    background: linear-gradient(90deg, rgba(17, 17, 19, 0.88) 0%, rgba(17, 17, 19, 0.55) 45%, rgba(17, 17, 19, 0.15) 100%);
 }
 
 .welcome-banner-content {
@@ -143,13 +130,13 @@
 .welcome-banner-date {
     display: inline-flex;
     padding: var(--space-1) var(--space-3);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.8);
     color: var(--welcome-text);
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
     border-radius: var(--radius-full);
     backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] .welcome-banner-date {
@@ -171,15 +158,15 @@
 
 .welcome-banner .btn-banner {
     padding: var(--space-2) var(--space-4);
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--welcome-text);
+    background: var(--brand);
+    color: #ffffff;
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
     border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(4px);
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px rgba(22, 101, 216, 0.2);
     cursor: pointer;
-    transition: background-color var(--motion-fast), color var(--motion-fast);
+    transition: background-color var(--motion-fast), box-shadow var(--motion-fast), transform var(--motion-fast);
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
@@ -187,17 +174,22 @@
 }
 
 .welcome-banner .btn-banner:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--brand-dark);
+    box-shadow: 0 4px 12px rgba(22, 101, 216, 0.3);
+    transform: translateY(-1px);
 }
 
 [data-theme="dark"] .welcome-banner .btn-banner {
-    background: var(--brand-soft);
-    color: var(--brand);
-    border-color: rgba(214, 178, 76, 0.25);
+    background: var(--brand);
+    color: #0B0B0C;
+    border-color: var(--brand);
+    font-weight: var(--font-semibold);
+    box-shadow: 0 2px 8px rgba(214, 178, 76, 0.2);
 }
 
 [data-theme="dark"] .welcome-banner .btn-banner:hover {
-    background: rgba(214, 178, 76, 0.2);
+    background: #E6C968;
+    box-shadow: 0 4px 14px rgba(214, 178, 76, 0.3);
 }
 
 /* Banner stat tiles */
@@ -213,10 +205,21 @@
 .welcome-stat {
     background: var(--welcome-stat-bg);
     border: 1px solid var(--welcome-stat-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
-    backdrop-filter: blur(4px);
-    transition: background-color var(--motion-normal) var(--ease-out), border-color var(--motion-normal) var(--ease-out);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--welcome-stat-shadow);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out), background-color var(--motion-normal) var(--ease-out);
+}
+
+.welcome-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .welcome-stat:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
 .welcome-stat-label {
@@ -225,16 +228,21 @@
     gap: var(--space-2);
     color: var(--welcome-subtext);
     font-size: var(--text-xs);
-    font-weight: var(--font-medium);
+    font-weight: var(--font-semibold);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: var(--space-2);
 }
 
+.welcome-stat-label i {
+    font-size: 16px;
+    color: var(--brand);
+}
+
 .welcome-stat-value {
     font-size: var(--text-2xl);
     font-weight: var(--font-bold);
-    color: var(--welcome-text);
+    color: var(--welcome-stat-value);
     line-height: 1.2;
 }
 
