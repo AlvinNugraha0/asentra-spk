@@ -29,16 +29,26 @@ return function (): void {
         ['GET', '/admin/kriteria', 'App\\Controllers\\KriteriaController@index'],
         ['POST', '/admin/kriteria/update', 'App\\Controllers\\KriteriaController@update'],
 
+        // Admin penilaian — monitoring only (read-only)
         ['GET', '/admin/penilaian', 'App\\Controllers\\PenilaianController@index'],
-        ['GET', '/admin/penilaian/create', 'App\\Controllers\\PenilaianController@create'],
-        ['POST', '/admin/penilaian/store', 'App\\Controllers\\PenilaianController@store'],
-        ['GET', '/admin/penilaian/edit/{id}', 'App\\Controllers\\PenilaianController@edit'],
-        ['POST', '/admin/penilaian/update', 'App\\Controllers\\PenilaianController@update'],
-
         ['GET', '/admin/riwayat', 'App\\Controllers\\PenilaianController@history'],
 
         // Owner
         ['GET', '/owner/dashboard', 'App\\Controllers\\OwnerDashboardController@index'],
+
+        // Owner — Teknisi (read-only)
+        ['GET', '/owner/teknisi', 'App\\Controllers\\OwnerTeknisiController@index'],
+
+        // Owner — Penilaian Kinerja
+        ['GET', '/owner/penilaian', 'App\\Controllers\\OwnerPenilaianController@index'],
+        ['GET', '/owner/penilaian/create', 'App\\Controllers\\OwnerPenilaianController@create'],
+        ['POST', '/owner/penilaian/store', 'App\\Controllers\\OwnerPenilaianController@store'],
+        ['GET', '/owner/penilaian/edit/{id}', 'App\\Controllers\\OwnerPenilaianController@edit'],
+        ['POST', '/owner/penilaian/update', 'App\\Controllers\\OwnerPenilaianController@update'],
+        ['GET', '/owner/penilaian/detail/{id}', 'App\\Controllers\\OwnerPenilaianController@detail'],
+        ['GET', '/owner/riwayat-penilaian', 'App\\Controllers\\OwnerPenilaianController@history'],
+
+        // Owner — Ranking & SAW
         ['GET', '/owner/ranking', 'App\\Controllers\\RankingController@index'],
         ['POST', '/owner/ranking/process', 'App\\Controllers\\RankingController@process'],
         ['GET', '/owner/ranking/detail/{id}', 'App\\Controllers\\RankingController@detail'],

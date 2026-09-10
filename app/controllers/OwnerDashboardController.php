@@ -30,16 +30,30 @@ class OwnerDashboardController
 
         $trendSummary = Hasil::getTrendSummary();
 
+        // Penilaian progress for active period
+        $activeTeknisi = Teknisi::countActive();
+        $activePenilaianPeriode = $latestPeriode ?? date('Y-m');
+        $dinilaiCount = Penilaian::countEvaluatedByPeriode($activePenilaianPeriode);
+        $belumDinilaiCount = max(0, $activeTeknisi - $dinilaiCount);
+
+        // Average criteria scores
+        $criteriaAvg = Penilaian::getCriteriaAverages($activePenilaianPeriode);
+
         renderWithLayout('owner/dashboard', [
             'title' => 'Dashboard Owner',
             'subtitle' => 'Ringkasan evaluasi kinerja teknisi.',
-            'activeTeknisi' => Teknisi::countActive(),
+            'activeTeknisi' => $activeTeknisi,
             'latestPeriode' => $latestPeriode,
             'processedPeriode' => $processedPeriode,
             'evaluatedCount' => $evaluatedCount,
             'topResult' => $topResult,
             'results' => $results,
             'trendSummary' => $trendSummary,
+            'activePenilaianPeriode' => $activePenilaianPeriode,
+            'dinilaiCount' => $dinilaiCount,
+            'belumDinilaiCount' => $belumDinilaiCount,
+            'criteriaAvg' => $criteriaAvg,
         ]);
     }
 }
+

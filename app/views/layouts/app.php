@@ -69,7 +69,7 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
                     <?= viewPartial('partials.nav_item', [
                         'route' => '/admin/penilaian',
                         'icon' => 'ClipboardCheck',
-                        'label' => 'Penilaian',
+                        'label' => 'Hasil Penilaian',
                     ]) ?>
                     <?= viewPartial('partials.nav_item', [
                         'route' => '/admin/riwayat',
@@ -85,14 +85,29 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
                         'label' => 'Dashboard',
                     ]) ?>
                     <?= viewPartial('partials.nav_item', [
+                        'route' => '/owner/teknisi',
+                        'icon' => 'Users',
+                        'label' => 'Data Teknisi',
+                    ]) ?>
+                    <?= viewPartial('partials.nav_item', [
+                        'route' => '/owner/penilaian',
+                        'icon' => 'ClipboardCheck',
+                        'label' => 'Penilaian Kinerja',
+                    ]) ?>
+                    <?= viewPartial('partials.nav_item', [
+                        'route' => '/owner/riwayat-penilaian',
+                        'icon' => 'History',
+                        'label' => 'Riwayat Penilaian',
+                    ]) ?>
+                    <?= viewPartial('partials.nav_item', [
                         'route' => '/owner/ranking',
                         'icon' => 'Trophy',
                         'label' => 'Hasil Ranking',
                     ]) ?>
                     <?= viewPartial('partials.nav_item', [
                         'route' => '/owner/riwayat',
-                        'icon' => 'History',
-                        'label' => 'Riwayat',
+                        'icon' => 'ClockCounterClockwise',
+                        'label' => 'Riwayat Ranking',
                     ]) ?>
                     <?= viewPartial('partials.nav_item', [
                         'route' => '/owner/laporan',

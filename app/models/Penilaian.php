@@ -120,6 +120,78 @@ class Penilaian
         return Database::query($sql, [$limit])->fetchAll();
     }
 
+    /**
+     * Get all active technicians with their evaluation status for a given period.
+     * Returns rows for ALL active technicians — those with penilaian have their values,
+     * those without have NULL c1/c2/c3 fields and status 'belum_dinilai'.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function allWithStatus(string $periode, string $search = '', string $statusFilter = ''): array
+    {
+        $sql = 'SELECT t.id AS teknisi_id, t.kode_teknisi, t.nama AS nama_teknisi,
+                       p.id AS penilaian_id, p.periode, p.c1, p.c2, p.c3,
+                       p.created_at, p.created_by,
+                       u.nama AS nama_user,
+                       h.nilai_preferensi, h.ranking,
+                       CASE WHEN p.id IS NOT NULL THEN \'sudah_dinilai\' ELSE \'belum_dinilai\' END AS status_penilaian
+                FROM tb_teknisi t
+                LEFT JOIN tb_penilaian p ON p.teknisi_id = t.id AND p.periode = ?
+                LEFT JOIN tb_user u ON u.id = p.created_by
+                LEFT JOIN tb_hasil h ON h.penilaian_id = p.id
+                WHERE t.status = \'active\'';
+        $params = [$periode];
+
+        if ($search !== '') {
+            $sql .= ' AND (t.kode_teknisi LIKE ? OR t.nama LIKE ?)';
+            $like = '%' . $search . '%';
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        if ($statusFilter === 'sudah_dinilai') {
+            $sql .= ' AND p.id IS NOT NULL';
+        } elseif ($statusFilter === 'belum_dinilai') {
+            $sql .= ' AND p.id IS NULL';
+        }
+
+        $sql .= ' ORDER BY LENGTH(t.kode_teknisi) ASC, t.kode_teknisi ASC';
+
+        return Database::query($sql, $params)->fetchAll();
+    }
+
+    /**
+     * Find a penilaian with its SAW result data (normalisasi, kontribusi, ranking).
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function findDetailWithSaw(int $id): ?array
+    {
+        $sql = 'SELECT p.*, t.kode_teknisi, t.nama AS nama_teknisi,
+                       u.nama AS nama_user,
+                       h.nilai_c1_normalisasi, h.nilai_c2_normalisasi, h.nilai_c3_normalisasi,
+                       h.kontribusi_c1, h.kontribusi_c2, h.kontribusi_c3,
+                       h.nilai_preferensi, h.ranking
+                FROM tb_penilaian p
+                JOIN tb_teknisi t ON t.id = p.teknisi_id
+                LEFT JOIN tb_user u ON u.id = p.created_by
+                LEFT JOIN tb_hasil h ON h.penilaian_id = p.id
+                WHERE p.id = ? LIMIT 1';
+        $row = Database::query($sql, [$id])->fetch();
+        return $row ?: null;
+    }
+
+    /**
+     * Count how many technicians have been evaluated in a given period.
+     */
+    public static function countEvaluatedByPeriode(string $periode): int
+    {
+        return (int) Database::query(
+            'SELECT COUNT(DISTINCT teknisi_id) AS c FROM tb_penilaian WHERE periode = ?',
+            [$periode]
+        )->fetch()['c'];
+    }
+
     // ponytail: single clean query for criteria averages
     public static function getCriteriaAverages(?string $periode = null): array
     {
