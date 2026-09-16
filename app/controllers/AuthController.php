@@ -1,4 +1,4 @@
-<?php
++<?php
 // ASENTRA SPK — Authentication controller
 
 declare(strict_types=1);
