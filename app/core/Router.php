@@ -33,8 +33,26 @@ return function (): void {
         ['GET', '/admin/penilaian', 'App\\Controllers\\PenilaianController@index'],
         ['GET', '/admin/riwayat', 'App\\Controllers\\PenilaianController@history'],
 
+        // Admin import — data operasional Excel
+        ['GET', '/admin/import', 'App\\Controllers\\ImportController@index'],
+        ['POST', '/admin/import', 'App\\Controllers\\ImportController@store'],
+        ['POST', '/admin/import/periode', 'App\\Controllers\\ImportController@storePeriode'],
+
+        // Admin periode & kalkulasi V2
+        ['GET', '/admin/periode', 'App\\Controllers\\AdminPeriodeController@index'],
+        ['GET', '/admin/periode/create', 'App\\Controllers\\AdminPeriodeController@create'],
+        ['POST', '/admin/periode/store', 'App\\Controllers\\AdminPeriodeController@store'],
+        ['POST', '/admin/periode/kalkulasi/{id}', 'App\\Controllers\\AdminPeriodeController@calculate'],
+        ['GET', '/admin/periode/hasil/{id}', 'App\\Controllers\\AdminPeriodeController@results'],
+
         // Owner
         ['GET', '/owner/dashboard', 'App\\Controllers\\OwnerDashboardController@index'],
+
+        // Owner — Assessment V2 Preview, Detail & Confirmation
+        ['GET', '/owner/assessment', 'App\\Controllers\\OwnerAssessmentController@index'],
+        ['GET', '/owner/assessment/{id}/detail/{teknisiId}', 'App\\Controllers\\OwnerAssessmentController@detail'],
+        ['POST', '/owner/assessment/{id}/confirm', 'App\\Controllers\\OwnerAssessmentController@confirm'],
+        ['GET', '/owner/assessment/{id}/confirm', 'App\\Controllers\\OwnerAssessmentController@confirmForm'],
 
         // Owner — Teknisi (read-only)
         ['GET', '/owner/teknisi', 'App\\Controllers\\OwnerTeknisiController@index'],

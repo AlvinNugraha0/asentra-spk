@@ -15,7 +15,12 @@ class OwnerDashboardController
     {
         requireOwner();
 
-        $latestPeriode = Penilaian::latestPeriode();
+        // Phase 6N: progress stats now follow the V2 assessment workflow.
+        // Hasil::latestPeriode() resolves the newest processed quarter code
+        // (e.g. 'Q1-2026'); the V1 Penilaian::latestPeriode() returned a
+        // 'YYYY-MM' legacy string that carries no V2 data and made the card
+        // report the wrong count. $criteriaAvg was dead here (never rendered)
+        // and is removed; getCriteriaAverages stays for the admin dashboard.
         $processedPeriode = Hasil::latestPeriode();
 
         $evaluatedCount = 0;
@@ -30,20 +35,18 @@ class OwnerDashboardController
 
         $trendSummary = Hasil::getTrendSummary();
 
-        // Penilaian progress for active period
+        // Penilaian progress for the active V2 period.
         $activeTeknisi = Teknisi::countActive();
-        $activePenilaianPeriode = $latestPeriode ?? date('Y-m');
-        $dinilaiCount = Penilaian::countEvaluatedByPeriode($activePenilaianPeriode);
+        $activePenilaianPeriode = $processedPeriode;
+        $dinilaiCount = $activePenilaianPeriode !== null
+            ? Penilaian::countEvaluatedByPeriode($activePenilaianPeriode)
+            : 0;
         $belumDinilaiCount = max(0, $activeTeknisi - $dinilaiCount);
-
-        // Average criteria scores
-        $criteriaAvg = Penilaian::getCriteriaAverages($activePenilaianPeriode);
 
         renderWithLayout('owner/dashboard', [
             'title' => 'Dashboard Owner',
             'subtitle' => 'Ringkasan evaluasi kinerja teknisi.',
             'activeTeknisi' => $activeTeknisi,
-            'latestPeriode' => $latestPeriode,
             'processedPeriode' => $processedPeriode,
             'evaluatedCount' => $evaluatedCount,
             'topResult' => $topResult,
@@ -52,7 +55,6 @@ class OwnerDashboardController
             'activePenilaianPeriode' => $activePenilaianPeriode,
             'dinilaiCount' => $dinilaiCount,
             'belumDinilaiCount' => $belumDinilaiCount,
-            'criteriaAvg' => $criteriaAvg,
         ]);
     }
 }
