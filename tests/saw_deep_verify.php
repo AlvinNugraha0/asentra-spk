@@ -8,6 +8,7 @@ require_once __DIR__ . '/../app/core/Database.php';
 require_once __DIR__ . '/../app/helpers/format.php';
 require_once __DIR__ . '/../app/models/Kriteria.php';
 require_once __DIR__ . '/../app/models/Penilaian.php';
+require_once __DIR__ . '/../app/models/PeriodePenilaian.php';
 require_once __DIR__ . '/../app/models/Hasil.php';
 require_once __DIR__ . '/../app/services/SawEngine.php';
 require_once __DIR__ . '/../app/services/SawService.php';

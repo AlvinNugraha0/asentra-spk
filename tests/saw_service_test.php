@@ -8,6 +8,7 @@ require_once __DIR__ . '/../app/core/Database.php';
 require_once __DIR__ . '/../app/helpers/format.php';
 require_once __DIR__ . '/../app/models/Kriteria.php';
 require_once __DIR__ . '/../app/models/Penilaian.php';
+require_once __DIR__ . '/../app/models/PeriodePenilaian.php';
 require_once __DIR__ . '/../app/models/Hasil.php';
 require_once __DIR__ . '/../app/services/SawEngine.php';
 require_once __DIR__ . '/../app/services/SawService.php';
@@ -36,7 +37,7 @@ $counts = [
     'kriteria' => (int) \App\Core\Database::query('SELECT COUNT(*) AS c FROM tb_kriteria')->fetch()['c'],
     'penilaian' => (int) \App\Core\Database::query('SELECT COUNT(*) AS c FROM tb_penilaian')->fetch()['c'],
 ];
-record($results, 'seed baseline present', $counts['users'] === 2 && $counts['teknisi'] === 10 && $counts['kriteria'] === 3 && $counts['penilaian'] === 10, json_encode($counts));
+record($results, 'seed baseline present', $counts['users'] === 2 && $counts['teknisi'] === 10 && $counts['kriteria'] === 3 && $counts['penilaian'] >= 10, json_encode($counts));
 
 // 1. Golden dataset ranking and preference values
 $result = SawService::process('2026-08');
@@ -87,16 +88,16 @@ record($results, 'no data period does not persist', Hasil::countByPeriode('2025-
 // 6. Same technician across different periods
 \App\Core\Database::query(
     'INSERT INTO tb_penilaian (teknisi_id, periode, c1, c2, c3, created_by) VALUES (?, ?, ?, ?, ?, ?)',
-    [1, '2026-09', 3, 3, 3, 1]
+    [1, '2026-12', 3, 3, 3, 1]
 );
-$resultSep = SawService::process('2026-09');
-record($results, 'same technician different period allowed', count($resultSep['rows']) === 1 && $resultSep['rows'][0]['teknisi_id'] === 1);
+$resultDec = SawService::process('2026-12');
+record($results, 'same technician different period allowed', count($resultDec['rows']) === 1 && $resultDec['rows'][0]['teknisi_id'] === 1);
 
 // 7. Duplicate active evaluation is prevented at DB level (model returns false)
 try {
     \App\Core\Database::query(
         'INSERT INTO tb_penilaian (teknisi_id, periode, c1, c2, c3, created_by) VALUES (?, ?, ?, ?, ?, ?)',
-        [1, '2026-09', 2, 2, 2, 1]
+        [1, '2026-12', 2, 2, 2, 1]
     );
     record($results, 'duplicate active evaluation blocked', false, 'DB allowed duplicate');
 } catch (\PDOException $e) {
@@ -142,12 +143,12 @@ foreach ($failed as $f) {
 }
 
 // --- Teardown ---
-// Remove test-only data created during this suite. Baseline (seed.sql) only
-// contains tb_penilaian for periode '2026-08'; tb_teknisi id=1 (Toni) is
-// 'active' in the baseline. Periods 2026-09 and 2026-11 do not exist in seed
+// Remove test-only data created during this suite. Baseline only
+// contains tb_penilaian for legacy periods ('2026-08', '2026-09'); tb_teknisi id=1 (Toni) is
+// 'active' in the baseline. Periods 2026-11 and 2026-12 do not exist in legacy data
 // and were inserted solely by test cases 6 and 10 above.
-\App\Core\Database::query("DELETE FROM tb_hasil     WHERE periode IN ('2026-09', '2026-11')");
-\App\Core\Database::query("DELETE FROM tb_penilaian WHERE periode IN ('2026-09', '2026-11')");
+\App\Core\Database::query("DELETE FROM tb_hasil     WHERE periode IN ('2026-11', '2026-12')");
+\App\Core\Database::query("DELETE FROM tb_penilaian WHERE periode IN ('2026-11', '2026-12')");
 \App\Core\Database::query("UPDATE tb_teknisi SET status = 'active' WHERE id = 1"); // restore Toni (test 8 set inactive)
 echo 'Teardown complete.' . PHP_EOL;
 

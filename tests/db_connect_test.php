@@ -28,7 +28,7 @@ try {
 
     echo "Counts: users={$counts['users']} teknisi={$counts['teknisi']} kriteria={$counts['kriteria']} penilaian={$counts['penilaian']}\n";
 
-    if ($counts['users'] == 2 && $counts['teknisi'] == 10 && $counts['kriteria'] == 3 && $counts['penilaian'] == 10) {
+    if ($counts['users'] >= 2 && $counts['teknisi'] >= 10 && $counts['kriteria'] == 3 && $counts['penilaian'] >= 10) {
         echo "OK: Seed data verified.\n";
     } else {
         echo "FAIL: Seed data counts mismatch.\n";

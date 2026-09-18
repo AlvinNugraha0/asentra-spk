@@ -159,6 +159,10 @@ r = owner.get("/owner/laporan/2026-08")
 html08 = owner.read(r)
 record("report 2026-08 still 10 teknisi after 2026-07 process", "Asep" in html08 and "Rahmat Hidayat" in html08)
 
+# === Teardown test-only data ===
+db_query("DELETE FROM tb_hasil WHERE periode = '2026-07';")
+db_query("DELETE FROM tb_penilaian WHERE periode = '2026-07';")
+
 # === Result ===
 failed = [r for r in results if not r[1]]
 print(f"\nPHASE 6 LAPORAN SUMMARY: {len(results)-len(failed)}/{len(results)} passed")
