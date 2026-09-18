@@ -3,7 +3,27 @@
 /** @var string $subtitle */
 /** @var string $periode */
 /** @var array<int, string> $periods */
+/** @var array<int, array{value: string, label: string}> $periodOptions */
+/** @var array<string, mixed>|null $periodInfo */
 /** @var array<int, array<string, mixed>> $results */
+
+// Phase 6H: V2 periods are labelled with nama_periode + rentang tanggal.
+$periodeLabel = $periodInfo !== null
+    ? (string) ($periodInfo['nama_periode'] ?? $periode)
+      . ' (' . (string) ($periodInfo['tanggal_mulai'] ?? '')
+      . ' s/d ' . (string) ($periodInfo['tanggal_selesai'] ?? '') . ')'
+    : periodLabel($periode);
+
+// Phase 6H: normalisasi & kontribusi hanya ditampilkan jika tersedia di tb_hasil
+// dan merupakan baris V2 (id_periode terisi). Baris legacy hanya menyimpan
+// c1/c2/c3 dan nilai_preferensi.
+$showDetail = false;
+foreach ($results as $r) {
+    if (!empty($r['id_periode']) && isset($r['nilai_c1_normalisasi'], $r['kontribusi_c1'])) {
+        $showDetail = true;
+        break;
+    }
+}
 ?>
 <div class="page-header" data-reveal="up">
     <h1 class="page-title"><?= e($title) ?></h1>
@@ -13,10 +33,10 @@
 <div class="action-bar" data-reveal="up">
     <form method="GET" action="<?= route('/owner/ranking') ?>" class="filter-group flex-1">
         <select name="periode" class="select filter-select-lg" onchange="this.form.submit()">
-            <option value="">Pilih periode</option>
-            <?php foreach ($periods as $p): ?>
-                <option value="<?= e($p) ?>" <?= $periode === $p ? 'selected' : '' ?>><?= e(periodLabel($p)) ?></option>
-            <?php endforeach; ?>
+        <option value="">Pilih periode</option>
+        <?php foreach ($periodOptions as $po): ?>
+            <option value="<?= e($po['value']) ?>" <?= $periode === $po['value'] ? 'selected' : '' ?>><?= e($po['label']) ?></option>
+        <?php endforeach; ?>
         </select>
         <?php if ($periode !== ''): ?>
             <a href="<?= route('/owner/ranking') ?>" class="btn btn-ghost btn-sm">Reset</a>
@@ -55,7 +75,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
         </div>
         <div class="empty-state-title">Data Ranking Tidak Tersedia</div>
-        <p>Periode <strong><?= e(periodLabel($periode)) ?></strong> memiliki data penilaian, tetapi belum diproses dengan SAW.</p>
+        <p>Periode <strong><?= e($periodeLabel) ?></strong> memiliki data penilaian, tetapi belum diproses dengan SAW.</p>
         <form method="POST" action="<?= route('/owner/ranking/process') ?>" class="mt-4" data-loading>
             <?= csrfField() ?>
             <input type="hidden" name="periode" value="<?= e($periode) ?>">
@@ -66,8 +86,8 @@
     <div class="card" data-reveal="up">
         <div class="row-between mb-5">
             <div>
-                <h2 class="card-title">Ranking SAW — <?= e(periodLabel($periode)) ?></h2>
-                <p class="card-subtitle">Hasil perhitungan berdasarkan kriteria C1, C2, dan C3.</p>
+                <h2 class="card-title">Ranking SAW — <?= e($periodeLabel) ?></h2>
+                <p class="card-subtitle">Nilai preferensi Vi = 0,30×C1 + 0,40×C2 + 0,30×C3 hasil SAW dari tb_hasil.</p>
             </div>
             <span class="badge badge-gold"><?= e((string) count($results)) ?> Teknisi</span>
         </div>
@@ -80,21 +100,42 @@
                         <th>C1</th>
                         <th>C2</th>
                         <th>C3</th>
-                        <th>NILAI SAW</th>
+                        <?php if ($showDetail): ?>
+                            <th>N1 (C1/max)</th>
+                            <th>N2 (C2/max)</th>
+                            <th>N3 (C3/max)</th>
+                            <th>K1 (w×N1)</th>
+                            <th>K2 (w×N2)</th>
+                            <th>K3 (w×N3)</th>
+                        <?php endif; ?>
+                        <th>Vi</th>
                         <th>AKSI</th>
                     </tr>
                 </thead>
                 <tbody data-reveal-group>
                     <?php foreach ($results as $r): ?>
+                        <?php $rowDetail = $showDetail && !empty($r['id_periode']); ?>
                         <tr data-reveal>
                             <td><?= rankBadge((int) $r['ranking']) ?></td>
                             <td>
                                 <strong><?= e($r['kode_teknisi']) ?></strong>
                                 <span class="text-muted"><?= e($r['nama_teknisi']) ?></span>
                             </td>
-                            <td><span class="badge badge-neutral"><?= e((string) $r['c1']) ?></span></td>
-                            <td><span class="badge badge-neutral"><?= e((string) $r['c2']) ?></span></td>
-                            <td><span class="badge badge-neutral"><?= e((string) $r['c3']) ?></span></td>
+                            <td><span class="badge badge-neutral tabular"><?= e(decimalFormat((string) ($r['c1'] ?? ''))) ?></span></td>
+                            <td><span class="badge badge-neutral tabular"><?= e(decimalFormat((string) ($r['c2'] ?? ''))) ?></span></td>
+                            <td><span class="badge badge-neutral tabular"><?= e(decimalFormat((string) ($r['c3'] ?? ''))) ?></span></td>
+                            <?php if ($showDetail): ?>
+                                <?php if ($rowDetail): ?>
+                                    <td class="tabular text-muted"><?= e(decimalFormat((string) ($r['nilai_c1_normalisasi'] ?? ''))) ?></td>
+                                    <td class="tabular text-muted"><?= e(decimalFormat((string) ($r['nilai_c2_normalisasi'] ?? ''))) ?></td>
+                                    <td class="tabular text-muted"><?= e(decimalFormat((string) ($r['nilai_c3_normalisasi'] ?? ''))) ?></td>
+                                    <td class="tabular text-muted"><?= e(decimalFormat((string) ($r['kontribusi_c1'] ?? ''))) ?></td>
+                                    <td class="tabular text-muted"><?= e(decimalFormat((string) ($r['kontribusi_c2'] ?? ''))) ?></td>
+                                    <td class="tabular text-muted"><?= e(decimalFormat((string) ($r['kontribusi_c3'] ?? ''))) ?></td>
+                                <?php else: ?>
+                                    <td colspan="6" class="text-muted">legacy</td>
+                                <?php endif; ?>
+                            <?php endif; ?>
                             <td class="font-bold text-gold tabular"><?= e(scoreFormat((float) $r['nilai_preferensi'], 3)) ?></td>
                             <td>
                                 <a href="<?= route('/owner/ranking/detail/' . $r['id']) ?>" class="btn btn-secondary btn-sm">Detail</a>

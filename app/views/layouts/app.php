@@ -72,6 +72,11 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
                         'label' => 'Hasil Penilaian',
                     ]) ?>
                     <?= viewPartial('partials.nav_item', [
+                        'route' => '/admin/import',
+                        'icon' => 'FileSpreadsheet',
+                        'label' => 'Import Data V2',
+                    ]) ?>
+                    <?= viewPartial('partials.nav_item', [
                         'route' => '/admin/riwayat',
                         'icon' => 'History',
                         'label' => 'Riwayat',
@@ -84,11 +89,11 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
                         'icon' => 'LayoutDashboard',
                         'label' => 'Dashboard',
                     ]) ?>
-                    <?= viewPartial('partials.nav_item', [
-                        'route' => '/owner/teknisi',
-                        'icon' => 'Users',
-                        'label' => 'Data Teknisi',
-                    ]) ?>
+                    <?php /*
+                        Phase 6N: V1 input workflow hidden from the owner UI.
+                        '/owner/penilaian' (+ create/history) stay routable for
+                        backward compat; the single owner menu "Penilaian
+                        Kinerja" now points at the V2 assessment workflow.
                     <?= viewPartial('partials.nav_item', [
                         'route' => '/owner/penilaian',
                         'icon' => 'ClipboardCheck',
@@ -98,6 +103,17 @@ $roleName = $role === 'admin' ? 'Admin Panel' : ($role === 'owner' ? 'Owner Pane
                         'route' => '/owner/riwayat-penilaian',
                         'icon' => 'History',
                         'label' => 'Riwayat Penilaian',
+                    ]) ?>
+                    */ ?>
+                    <?= viewPartial('partials.nav_item', [
+                        'route' => '/owner/assessment',
+                        'icon' => 'CheckCheck',
+                        'label' => 'Penilaian Kinerja',
+                    ]) ?>
+                    <?= viewPartial('partials.nav_item', [
+                        'route' => '/owner/teknisi',
+                        'icon' => 'Users',
+                        'label' => 'Data Teknisi',
                     ]) ?>
                     <?= viewPartial('partials.nav_item', [
                         'route' => '/owner/ranking',

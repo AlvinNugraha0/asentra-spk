@@ -40,6 +40,11 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+// Composer autoloader (PhpSpreadsheet, etc.)
+if (is_file(ROOT_PATH . DS . 'vendor' . DS . 'autoload.php')) {
+    require_once ROOT_PATH . DS . 'vendor' . DS . 'autoload.php';
+}
+
 // Application constants and environment
 require_once CONFIG_PATH . DS . 'constants.php';
 

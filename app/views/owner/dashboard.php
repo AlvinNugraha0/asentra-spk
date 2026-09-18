@@ -2,15 +2,13 @@
 /** @var string $title */
 /** @var string $subtitle */
 /** @var int $activeTeknisi */
-/** @var ?string $latestPeriode */
 /** @var ?string $processedPeriode */
 /** @var int $evaluatedCount */
 /** @var ?array<string, mixed> $topResult */
 /** @var array<int, array<string, mixed>> $results */
-/** @var string $activePenilaianPeriode */
+/** @var ?string $activePenilaianPeriode */
 /** @var int $dinilaiCount */
 /** @var int $belumDinilaiCount */
-/** @var array<string, mixed> $criteriaAvg */
 $user = currentUser() ?? [];
 $userName = $user['nama'] ?? 'Owner';
 $progressPct = $activeTeknisi > 0 ? round(($dinilaiCount / $activeTeknisi) * 100) : 0;
@@ -25,7 +23,7 @@ $progressPct = $activeTeknisi > 0 ? round(($dinilaiCount / $activeTeknisi) * 100
                 <p>Pantau dan kelola penilaian kinerja teknisi lapangan.</p>
             </div>
             <div class="welcome-banner-actions">
-                <a href="<?= route('/owner/penilaian/create') ?>" class="btn-banner">
+                <a href="<?= route('/owner/assessment') ?>" class="btn-banner">
                     <i class="ph ph-pencil-simple text-lg"></i>
                     Input Penilaian
                 </a>
@@ -44,7 +42,7 @@ $progressPct = $activeTeknisi > 0 ? round(($dinilaiCount / $activeTeknisi) * 100
                     Periode Terbaru
                 </div>
                 <div class="welcome-stat-value" style="font-size: var(--text-lg);">
-                    <?= $latestPeriode ? e(periodLabel($latestPeriode)) : '-' ?>
+                    <?= $processedPeriode !== null ? e(periodLabel($processedPeriode)) : '-' ?>
                 </div>
                 <div class="welcome-stat-meta">Data penilaian terakhir</div>
             </div>
@@ -86,10 +84,10 @@ $progressPct = $activeTeknisi > 0 ? round(($dinilaiCount / $activeTeknisi) * 100
 <div class="card mb-5" data-reveal="up" style="margin-top: var(--space-5);">
     <div class="section-header">
         <div class="section-header-left">
-            <h3>Progress Penilaian — <?= e(periodLabel($activePenilaianPeriode)) ?></h3>
+            <h3>Progress Penilaian — <?= $activePenilaianPeriode !== null ? e(periodLabel($activePenilaianPeriode)) : '-' ?></h3>
             <p><?= e((string) $dinilaiCount) ?> dari <?= e((string) $activeTeknisi) ?> teknisi sudah dinilai.</p>
         </div>
-        <a href="<?= route('/owner/penilaian') ?>" class="btn-link">Lihat Semua</a>
+        <a href="<?= route('/owner/assessment') ?>" class="btn-link">Lihat Semua</a>
     </div>
     <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap;">
         <div
@@ -274,13 +272,13 @@ $progressPct = $activeTeknisi > 0 ? round(($dinilaiCount / $activeTeknisi) * 100
 
                 <!-- Quick Actions -->
                 <div class="quick-action-grid">
-                    <a href="<?= route('/owner/penilaian/create') ?>" class="quick-action">
+                    <a href="<?= route('/owner/assessment') ?>" class="quick-action">
                         <div class="quick-action-icon">
                             <i class="ph ph-pencil-simple text-2xl"></i>
                         </div>
                         <span class="quick-action-label">Input Penilaian</span>
                     </a>
-                    <a href="<?= route('/owner/penilaian') ?>" class="quick-action">
+                    <a href="<?= route('/owner/assessment?mode=tabulasi') ?>" class="quick-action">
                         <div class="quick-action-icon">
                             <i class="ph ph-clipboard-check text-2xl"></i>
                         </div>

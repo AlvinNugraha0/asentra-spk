@@ -1,8 +1,17 @@
 <?php
 /** @var string $title */
 /** @var string $periode */
+/** @var array<string, mixed>|null $periodInfo */
 /** @var array<int, array<string, mixed>> $results */
 /** @var array<int, array<string, mixed>> $kriteria */
+
+// Phase 6I: V2 periods are labelled with nama_periode + rentang tanggal;
+// V1 codes ('YYYY-MM' / 'LEGACY-YYYY-MM') fall back to periodLabel().
+$periodeLabel = $periodInfo !== null
+    ? (string) ($periodInfo['nama_periode'] ?? $periode)
+      . ' (' . (string) ($periodInfo['tanggal_mulai'] ?? '')
+      . ' s/d ' . (string) ($periodInfo['tanggal_selesai'] ?? '') . ')'
+    : periodLabel($periode);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -26,7 +35,7 @@
             <div class="report-sub">Arsitektur &amp; Konstruksi — Cirebon</div>
             <h1>LAPORAN PENILAIAN KINERJA TEKNISI</h1>
             <p>Metode: Simple Additive Weighting (SAW)</p>
-            <p>Periode: <strong><?= e(periodLabel($periode)) ?></strong></p>
+            <p>Periode: <strong><?= e($periodeLabel) ?></strong></p>
         </header>
 
         <section class="report-meta">
@@ -74,9 +83,9 @@
                             <td class="numeric"><?= $no++ ?></td>
                             <td><?= e($r['kode_teknisi']) ?></td>
                             <td><?= e($r['nama_teknisi']) ?></td>
-                            <td class="numeric"><?= e((string) $r['c1']) ?></td>
-                            <td class="numeric"><?= e((string) $r['c2']) ?></td>
-                            <td class="numeric"><?= e((string) $r['c3']) ?></td>
+                            <td class="numeric"><?= e((string) (float) $r['c1']) ?></td>
+                            <td class="numeric"><?= e((string) (float) $r['c2']) ?></td>
+                            <td class="numeric"><?= e((string) (float) $r['c3']) ?></td>
                             <td class="numeric"><?= e(scoreFormat((float) $r['nilai_preferensi'], 3)) ?></td>
                             <td class="numeric"><?= e((string) $r['ranking']) ?></td>
                         </tr>

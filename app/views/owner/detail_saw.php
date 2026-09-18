@@ -63,17 +63,33 @@
         <div class="saw-flow-card">
             <div class="saw-flow-label">Nilai Maksimum per Kriteria</div>
             <div class="grid-3">
+                <?php
+                // Phase 6H: max diambil langsung dari tb_hasil (V2). Fallback
+                // c/normalisasi hanya untuk baris legacy tanpa id_periode.
+                $maxC1 = $maxCriteria['c1'] ?? null;
+                $maxC2 = $maxCriteria['c2'] ?? null;
+                $maxC3 = $maxCriteria['c3'] ?? null;
+                if ($maxC1 === null && (float) ($hasil['nilai_c1_normalisasi'] ?? 0) > 0) {
+                    $maxC1 = (float) $hasil['c1'] / (float) $hasil['nilai_c1_normalisasi'];
+                }
+                if ($maxC2 === null && (float) ($hasil['nilai_c2_normalisasi'] ?? 0) > 0) {
+                    $maxC2 = (float) $hasil['c2'] / (float) $hasil['nilai_c2_normalisasi'];
+                }
+                if ($maxC3 === null && (float) ($hasil['nilai_c3_normalisasi'] ?? 0) > 0) {
+                    $maxC3 = (float) $hasil['c3'] / (float) $hasil['nilai_c3_normalisasi'];
+                }
+                ?>
                 <div>
                     <div class="meta-text">max(C1)</div>
-                    <div class="saw-flow-value"><?= e(scoreFormat((float) $hasil['c1'] / (float) $hasil['nilai_c1_normalisasi'], 0)) ?></div>
+                    <div class="saw-flow-value"><?= e(decimalFormat((string) ($maxC1 ?? 0))) ?></div>
                 </div>
                 <div>
                     <div class="meta-text">max(C2)</div>
-                    <div class="saw-flow-value"><?= e(scoreFormat((float) $hasil['c2'] / (float) $hasil['nilai_c2_normalisasi'], 0)) ?></div>
+                    <div class="saw-flow-value"><?= e(decimalFormat((string) ($maxC2 ?? 0))) ?></div>
                 </div>
                 <div>
                     <div class="meta-text">max(C3)</div>
-                    <div class="saw-flow-value"><?= e(scoreFormat((float) $hasil['c3'] / (float) $hasil['nilai_c3_normalisasi'], 0)) ?></div>
+                    <div class="saw-flow-value"><?= e(decimalFormat((string) ($maxC3 ?? 0))) ?></div>
                 </div>
             </div>
         </div>
